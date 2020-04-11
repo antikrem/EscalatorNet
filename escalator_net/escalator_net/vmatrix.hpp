@@ -131,7 +131,7 @@ public:
 	}
 
 	// Conducts VMatrix element wise addition
-	VMatrix operator+(const VMatrix& b) {
+	VMatrix operator+(const VMatrix& b) const {
 		// Assert matrix dimensions are the same
 		assert(this->ROW_LENGTH == b.ROW_LENGTH && this->COLUMN_LENGTH == b.COLUMN_LENGTH && "Matrix addition requries the same dimensions");
 		
@@ -139,7 +139,19 @@ public:
 		VMatrix c(b);
 
 		for (uint i = 0; i < LENGTH; i++) {
-			c.data[i] = c.data[i] + data[i];
+			c.data[i] += data[i];
+		}
+
+		return c;
+	}
+
+	// Conducts VMatrix addition against scalar
+	VMatrix operator+(const T& b) const {
+		// Create VMatrix to use as return
+		VMatrix c(*this);
+
+		for (uint i = 0; i < LENGTH; i++) {
+			c.data[i] += b;
 		}
 
 		return c;
