@@ -23,11 +23,27 @@ public:
 		return 1 / (1 + exp(-x));
 	}
 
+	// Implementation of sigmoid derivative
+	static T sigmoidDerivative(T x) {
+		return sigmoid(x) * (1 - sigmoid(x));
+	}
+
 	// Returns corresponding function
 	static function_ptr getFunction(FunctionTypes type) {
 		switch (type) {
 		case FunctionTypes::sigmoid:
 			return Functions::sigmoid;
+
+		default:
+			return nullptr;
+		}
+	}
+
+	// Returns corresponding function derivative
+	static function_ptr getFunctionDerivative(FunctionTypes type) {
+		switch (type) {
+		case FunctionTypes::sigmoid:
+			return Functions::sigmoidDerivative;
 
 		default:
 			return nullptr;
