@@ -178,7 +178,8 @@ public:
 		return c;
 	}
 
-	// Aplies a lambda to each element in the function
+	// Aplies a lambda F to each element in the function
+	// F : T -> T for each cell in matrix
 	VMatrix apply(T(*func)(T)) {
 		VMatrix c(*this);
 
