@@ -187,6 +187,21 @@ public:
 		return c;
 	}
 
+	// Conducts VMatrix element wise substraction
+	VMatrix operator-(const VMatrix& b) const {
+		// Assert matrix dimensions are the same
+		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength && "Matrix subtraction requries the same dimensions");
+
+		// Create VMatrix to use as return
+		VMatrix c(*this);
+
+		for (uint i = 0; i < length; i++) {
+			c.data[i] -= b.data[i];
+		}
+
+		return c;
+	}
+
 	// Conducts VMatrix addition against scalar
 	VMatrix operator+(const T& b) const {
 		// Create VMatrix to use as return
@@ -220,6 +235,19 @@ public:
 		return c;
 	}
 
+	// Conducts VMatrix scalar multiplication in the form Ak
+	VMatrix operator*(const T& k) const {
+		// Assert matrix dimensions for multiplication 
+		
+		VMatrix c(*this);
+
+		for (uint i = 0; i < length; i++) {
+			c.data[i] *= k;
+		}
+
+		return c;
+	}
+
 	// Aplies a lambda F to each element in the function
 	// F : T -> T for each cell in matrix
 	VMatrix apply(T(*func)(T)) {
@@ -231,6 +259,31 @@ public:
 
 		return c;
 	}
+
+	// Sums all values in the matrix, and returns sum
+	T sum() const {
+		T sum = T(0);
+		for (uint i = 0; i < length; i++) {
+			sum += data[i];
+		}
+		return sum;
+	}
+
+	// Sums all values in a collumn and returns VMatrix with column length 1
+	VMatrix<T> sumColumns() const {
+		VMatrix<T> c(rowLength, 1, T(0));
+
+		for (uint i = 0; i < rowLength; i++) {
+			T v = T(0);
+			for (uint j = 0; j < columnLength; j++) {
+				v += get(i, j);
+			}
+			c.set(i, 0, v);
+		}
+
+		return c;
+	}
+	
 };
 
 template <typename T>
