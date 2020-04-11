@@ -22,13 +22,26 @@
 template <typename T = double>
 class VMatrix {
 
+private:
+	uint rowLength;
+	uint columnLength;
+	uint length;
+
 public:
-	const uint ROW_LENGTH;
-	const uint COLUMN_LENGTH;
-	const uint LENGTH;
+	uint getRowLength() const {
+		return rowLength;
+	}
+
+	uint getColumnLength() const {
+		return columnLength;
+	}
+
+	uint getLength() const {
+		return length;
+	}
 
 private:
-	/* Data is stored on the stack if VMatrix is initialised as a 2D heap array
+	/* Data is stored on the heap  as a 2D array
 	 *
 	 * Translation to get index i from (x, y), where x is how far to the right, and y is how far down:
 	 * F: (x,y) -> i : y * C + x
@@ -44,37 +57,37 @@ public:
 	// Set value by (x,y) coord
 	// Throws assertion error on invalid x,y in debug
 	void set(uint x, uint y, T value) {
-		assert(x < ROW_LENGTH && y < COLUMN_LENGTH && "Attempt to index outside of matrix range");
-		data[y * ROW_LENGTH + x] = value;
+		assert(x < rowLength && y < columnLength && "Attempt to index outside of matrix range");
+		data[y * rowLength + x] = value;
 	}
 
 	// Set value by (x,y) coord
 	// is templated
 	template<uint X, uint Y>
 	void set(T value) {
-		assert(X < ROW_LENGTH && Y < COLUMN_LENGTH && "Attempt to index outside of matrix range");
-		data[Y * ROW_LENGTH + X] = value;
+		assert(X < rowLength && Y < columnLength && "Attempt to index outside of matrix range");
+		data[Y * rowLength + X] = value;
 	}
 
 	// Sets data directly
 	void set(T* data, uint length) {
-		assert(length <= LENGTH && "");
+		assert(length <= length && "");
 		alg::copy(data, this->data, length);
 	}
 
 	// get value by (x,y) coord
 	// Throws assertion error on invalid x,y in debug
 	T get(uint x, uint y) const {
-		assert(x < ROW_LENGTH && y < COLUMN_LENGTH && "Attempt to index outside of matrix range");
-		return data[y * ROW_LENGTH + x];
+		assert(x < rowLength && y < columnLength && "Attempt to index outside of matrix range");
+		return data[y * rowLength + x];
 	}
 
 	// get value by (x,y) coord
 	// is templated
 	template<uint X, uint Y>
 	T get() const {
-		assert(X < ROW_LENGTH && Y < COLUMN_LENGTH && "Attempt to index outside of matrix range");
-		return data[Y * ROW_LENGTH + X];
+		assert(X < rowLength && Y < columnLength && "Attempt to index outside of matrix range");
+		return data[Y * rowLength + X];
 	}
 
 	// gets data directly
@@ -90,41 +103,44 @@ public:
 
 	// Constructor via reference
 	VMatrix(const VMatrix& ref)
-		: ROW_LENGTH(ref.ROW_LENGTH), COLUMN_LENGTH(ref.COLUMN_LENGTH), LENGTH(ROW_LENGTH * COLUMN_LENGTH) {
+		: rowLength(ref.rowLength), columnLength(ref.columnLength), length(rowLength * columnLength) {
 
-		data = (T*)malloc(sizeof(T) * LENGTH);
+		data = (T*)malloc(sizeof(T) * length);
 
-		alg::copy(ref.get(), data, LENGTH);
+		alg::copy(ref.get(), data, length);
 	}
 
 	// Generates identity matrix
-	VMatrix(int ROW_LENGTH, int COLUMN_LENGTH)
-		: ROW_LENGTH(ROW_LENGTH), COLUMN_LENGTH(COLUMN_LENGTH), LENGTH(ROW_LENGTH * COLUMN_LENGTH) {
-		assert(ROW_LENGTH == COLUMN_LENGTH && "Identity matrix only supported for square matrix");
+	VMatrix(uint rowLength, uint columnLength)
+		: rowLength(rowLength), columnLength(columnLength), length(rowLength * columnLength) {
+		assert(rowLength == columnLength && "Identity matrix only supported for square matrix");
 
-		data = (T*)malloc(sizeof(T) * LENGTH);
+		data = (T*)malloc(sizeof(T) * length);
 
-		alg::fill(data, LENGTH, T(0));
-		for (int i = 0; i < ROW_LENGTH; i++) {
+		alg::fill(data, length, T(0));
+		for (int i = 0; i < rowLength; i++) {
 			set(i, i, T(1));
 		}
 	}
 
 	// Generates matrix and fills values
-	VMatrix(int ROW_LENGTH, int COLUMN_LENGTH, T value)
-		: ROW_LENGTH(ROW_LENGTH), COLUMN_LENGTH(COLUMN_LENGTH), LENGTH(ROW_LENGTH * COLUMN_LENGTH) {
+	VMatrix(uint rowLength, uint columnLength, T value)
+		: rowLength(rowLength), columnLength(columnLength), length(rowLength * columnLength) {
 
-		data = (T*)malloc(sizeof(T) * LENGTH);
+		data = (T*)malloc(sizeof(T) * length);
 
-		alg::fill(data, LENGTH, value);
+		alg::fill(data, length, value);
 	}
 
 	// Generates values for matrix with a lambda f, mapping row, width to a value
 	// f : (x:int, y:int). -> v:T
-	VMatrix(int ROW_LENGTH, int COLUMN_LENGTH, std::function<T(uint, uint)> generator)
-		: ROW_LENGTH(ROW_LENGTH), COLUMN_LENGTH(COLUMN_LENGTH), LENGTH(ROW_LENGTH * COLUMN_LENGTH) {
-		for (uint i = 0; i < ROW_LENGTH; i++) {
-			for (uint j = 0; j < COLUMN_LENGTH; j++) {
+	VMatrix(uint rowLength, uint columnLength, std::function<T(uint, uint)> generator)
+		: rowLength(rowLength), columnLength(columnLength), length(rowLength * columnLength) {
+		
+		data = (T*)malloc(sizeof(T) * length);
+
+		for (uint i = 0; i < rowLength; i++) {
+			for (uint j = 0; j < columnLength; j++) {
 				set(i, j, generator(i, j));
 			}
 		}
@@ -133,9 +149,9 @@ public:
 	// Fixed size assignment operator
 	VMatrix& operator=(const VMatrix& b) {
 		// Assert matrix dimensions are the same
-		assert(this->ROW_LENGTH == b.ROW_LENGTH && this->COLUMN_LENGTH == b.COLUMN_LENGTH && "Matrix safe assignment requries the same dimensions");
+		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength && "Matrix safe assignment requries the same dimensions");
 
-		for (uint i = 0; i < LENGTH; i++) {
+		for (uint i = 0; i < length; i++) {
 			this->data[i] += b.data[i];
 		}
 
@@ -145,12 +161,12 @@ public:
 	// Conducts VMatrix element wise addition
 	VMatrix operator+(const VMatrix& b) const {
 		// Assert matrix dimensions are the same
-		assert(this->ROW_LENGTH == b.ROW_LENGTH && this->COLUMN_LENGTH == b.COLUMN_LENGTH && "Matrix addition requries the same dimensions");
+		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength && "Matrix addition requries the same dimensions");
 		
 		// Create VMatrix to use as return
 		VMatrix c(b);
 
-		for (uint i = 0; i < LENGTH; i++) {
+		for (uint i = 0; i < length; i++) {
 			c.data[i] += data[i];
 		}
 
@@ -162,7 +178,7 @@ public:
 		// Create VMatrix to use as return
 		VMatrix c(*this);
 
-		for (uint i = 0; i < LENGTH; i++) {
+		for (uint i = 0; i < length; i++) {
 			c.data[i] += b;
 		}
 
@@ -172,15 +188,15 @@ public:
 	// Conducts VMatrix matrix multiplication in the form AB
 	VMatrix operator*(const VMatrix& b) const {
 		// Assert matrix dimensions for multiplication 
-		assert(this->ROW_LENGTH == b.COLUMN_LENGTH  && "Matrix multiplication requries a.ROW_LENGTH == b.COLUMN_LENGTH");
+		assert(this->rowLength == b.columnLength  && "Matrix multiplication requries a.ROW_LENGTH == b.COLUMN_LENGTH");
 		
 		// Create VMatrix to use as return
-		VMatrix c(b.ROW_LENGTH, this->COLUMN_LENGTH, T(0));
+		VMatrix c(b.rowLength, this->columnLength, T(0));
 
-		for (uint i = 0; i < c.ROW_LENGTH; i++) {
-			for (uint j = 0; j < c.COLUMN_LENGTH; j++) {
+		for (uint i = 0; i < c.rowLength; i++) {
+			for (uint j = 0; j < c.columnLength; j++) {
 				T sum = T(0);
-				for (uint p = 0; p < this->ROW_LENGTH; p++) {
+				for (uint p = 0; p < this->rowLength; p++) {
 					sum += this->get(p, j) * b.get(i, p);
 				}
 				c.set(i, j, sum);
@@ -195,7 +211,7 @@ public:
 	VMatrix apply(T(*func)(T)) {
 		VMatrix c(*this);
 
-		for (uint i = 0; i < LENGTH; i++) {
+		for (uint i = 0; i < length; i++) {
 			c.data[i] = func(c.data[i]);
 		}
 
@@ -206,8 +222,8 @@ public:
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const VMatrix<T>& m)
 {
-	for (uint j = 0; j < m.COLUMN_LENGTH; j++) {
-		for (uint i = 0; i < m.ROW_LENGTH; i++) {
+	for (uint j = 0; j < m.getColumnLength(); j++) {
+		for (uint i = 0; i < m.getRowLength(); i++) {
 			os << m.get(i, j) << " ";
 		}
 		os << std::endl;

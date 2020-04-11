@@ -24,15 +24,13 @@ class Node {
 	uint inputSize;
 	
 	/// Node parameters
-
 	// Associated weights
 	VMatrix<T> weight;
 
 	// Bias for node
 	T bias = 0;
 
-	/// Last calculated forward propogation results
-
+	///calculated forward propogation results
 	// Randomize weights
 	void randomiseWeights() {
 		rand_ex::sampleNextUniforms(weight.get(), inputSize, 0.0, 1.0);
@@ -52,7 +50,7 @@ public:
 	 * input is in the for of a reference to a VMatrix of size (inputSize, 1)
 	 */
 	T predict(const VMatrix<T>& input) {
-		assert(input.ROW_LENGTH == inputSize && input.COLUMN_LENGTH == 1 && "Input must be accepted size of (inputSize, 1)");
+		assert(input.getRowLength() == inputSize && input.getColumnLength() == 1 && "Input must be accepted size of (inputSize, 1)");
 		T z = (input * weight).get(0,0) + bias;
 		T k = activationFunction(z);
 		return activationFunction(z);
@@ -63,7 +61,7 @@ public:
 	 * Will return a matrix of size (1, j)
 	 */
 	VMatrix<T> vPredict(const VMatrix<T>& input) {
-		assert(input.ROW_LENGTH == inputSize && "Input must be accepted size of (inputSize, j)");
+		assert(input.getRowLength() == inputSize && "Input must be accepted size of (inputSize, j)");
 		VMatrix z = (input * weight) + bias;
 		auto k = z.apply(activationFunction);
 		return z.apply(activationFunction);
