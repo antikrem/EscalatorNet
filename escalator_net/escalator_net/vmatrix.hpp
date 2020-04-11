@@ -177,6 +177,17 @@ public:
 
 		return c;
 	}
+
+	// Aplies a lambda to each element in the function
+	VMatrix apply(T(*func)(T)) {
+		VMatrix c(*this);
+
+		for (uint i = 0; i < LENGTH; i++) {
+			c.data[i] = func(c.data[i]);
+		}
+
+		return c;
+	}
 };
 
 template <typename T>
