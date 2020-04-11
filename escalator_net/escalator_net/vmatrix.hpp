@@ -158,6 +158,20 @@ public:
 		return *this;
 	}
 
+	// Assigns this VMatrix to be an exact deep copy of another
+	// No restriction on size of matrix
+	void assign(VMatrix& b) {
+		this->rowLength = b.rowLength;
+		this->columnLength = b.columnLength;
+		this->length = b.length;
+
+		free(data);
+		data = (T*)malloc(sizeof(T) * length);
+
+		alg::copy(this->data, b.data, length);
+
+	}
+
 	// Conducts VMatrix element wise addition
 	VMatrix operator+(const VMatrix& b) const {
 		// Assert matrix dimensions are the same
