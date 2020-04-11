@@ -118,7 +118,7 @@ public:
 		data = (T*)malloc(sizeof(T) * length);
 
 		alg::fill(data, length, T(0));
-		for (int i = 0; i < rowLength; i++) {
+		for (uint i = 0; i < rowLength; i++) {
 			set(i, i, T(1));
 		}
 	}
@@ -160,7 +160,7 @@ public:
 
 	// Assigns this VMatrix to be an exact deep copy of another
 	// No restriction on size of matrix
-	void assign(VMatrix& b) {
+	void assign(const VMatrix& b) {
 		this->rowLength = b.rowLength;
 		this->columnLength = b.columnLength;
 		this->length = b.length;
@@ -168,7 +168,7 @@ public:
 		free(data);
 		data = (T*)malloc(sizeof(T) * length);
 
-		alg::copy(this->data, b.data, length);
+		alg::copy(b.data, this->data, length);
 
 	}
 
