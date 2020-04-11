@@ -130,6 +130,18 @@ public:
 		}
 	}
 
+	// Fixed size assignment operator
+	VMatrix& operator=(const VMatrix& b) {
+		// Assert matrix dimensions are the same
+		assert(this->ROW_LENGTH == b.ROW_LENGTH && this->COLUMN_LENGTH == b.COLUMN_LENGTH && "Matrix safe assignment requries the same dimensions");
+
+		for (uint i = 0; i < LENGTH; i++) {
+			this->data[i] += b.data[i];
+		}
+
+		return *this;
+	}
+
 	// Conducts VMatrix element wise addition
 	VMatrix operator+(const VMatrix& b) const {
 		// Assert matrix dimensions are the same
