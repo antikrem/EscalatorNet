@@ -151,6 +151,8 @@ public:
 		// Assert matrix dimensions are the same
 		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength && "Matrix safe assignment requries the same dimensions");
 
+		alg::fill(data, length, T(0.0));
+
 		for (uint i = 0; i < length; i++) {
 			this->data[i] += b.data[i];
 		}
