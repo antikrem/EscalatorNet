@@ -310,6 +310,13 @@ public:
 		}
 		return lBound;
 	}
+
+	// Clamps all elements to given range
+	void clamp(T lower, T upper) {
+		for (uint i = 0; i < length; i++) {
+			data[i] = std::min(upper, std::max(lower, data[i]));
+		}
+	}
 };
 
 template <typename T>
