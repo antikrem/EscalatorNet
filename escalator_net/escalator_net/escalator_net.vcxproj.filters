@@ -25,6 +25,9 @@
     <Filter Include="Source Files\helper">
       <UniqueIdentifier>{ea5b0424-13b1-4444-836c-12392805f9dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\tests">
+      <UniqueIdentifier>{d379bccf-1a99-4b32-b066-037d196b513c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="escalator_net.cpp">
@@ -55,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="rand_ex.hpp">
       <Filter>Header Files\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="_tests.h">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="single_node.hpp">
+      <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
