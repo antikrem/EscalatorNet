@@ -5,6 +5,7 @@
 
 #include "functions.hpp"
 #include "rand_ex.hpp"
+#include "vmatrix.hpp"
 
 // Forward declaraction of Node class for use by outstream operator declaraction
 template <typename T>
@@ -62,10 +63,10 @@ class Node {
 public:
 	/* Takes FunctionTypes as parameter
 	 */
-	Node(typename FunctionTypes activationFunctiontype, int inputSize) 
+	Node(typename FunctionTypes activationFunctionType, int inputSize)
 	: inputSize(inputSize), weight(1, inputSize, 0) {
 		this->activationFunctionType = activationFunctionType;
-		this->activationFunction = Functions<T>::getFunction(activationFunctiontype);
+		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
 		randomiseWeights();
 	}
 
@@ -205,7 +206,7 @@ static std::ostream& operator<<(std::ostream& os, const Node<T>& n)
 {
 	std::cout << "NODE: " << Functions<T>::getFunctionName(n.activationFunctionType) << std::endl;
 	std::cout << "WEIGHT: " << n.weight.qTranspose() << std::endl;
-	std::cout << "BIAS: " << n.bias << std::endl;
+	std::cout << "BIAS: " << n.bias;
 	return os;
 }
 
