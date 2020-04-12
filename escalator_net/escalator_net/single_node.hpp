@@ -24,8 +24,8 @@ namespace tests {
 		auto b = a.optimise(output);
 
 		std::cout << a << std::endl;
-		std::cout << "INPUT:" << std::endl << input << std::endl;
-		std::cout << "SOLUTION:" << std::endl << b << std::endl;
+		std::cout << "INPUT:" << std::endl << input.transpose() << std::endl;
+		std::cout << "SOLUTION:" << std::endl << b.transpose() << std::endl;
 	}
 
 	/* Implementation of AND gate
@@ -55,8 +55,8 @@ namespace tests {
 		auto b = a.optimise(output);
 
 		std::cout << a << std::endl;
-		std::cout << "INPUT:" << std::endl << input << std::endl;
-		std::cout << "SOLUTION:" << std::endl << b << std::endl;
+		std::cout << "INPUT:" << std::endl << input.transpose() << std::endl;
+		std::cout << "SOLUTION:" << std::endl << b.transpose() << std::endl;
 	}
 
 
