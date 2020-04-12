@@ -252,7 +252,6 @@ public:
 	// F : T -> T for each cell in matrix
 	VMatrix apply(T(*func)(T)) {
 		VMatrix c(*this);
-
 		for (uint i = 0; i < length; i++) {
 			c.data[i] = func(c.data[i]);
 		}
@@ -292,6 +291,24 @@ public:
 		std::swap(c.rowLength, c.columnLength);
 
 		return c;
+	}
+
+	// Returns element that has the maximum value
+	T max() const {
+		T uBound = data[0];
+		for (uint i = 1; i < length; i++) {
+			uBound = data[i] > uBound ? data[i] : uBound;
+		}
+		return uBound;
+	}
+
+	// Returns element that has the minimum value
+	T min() const {
+		T lBound = data[0];
+		for (uint i = 1; i < length; i++) {
+			lBound = data[i] < lBound ? data[i] : lBound;
+		}
+		return lBound;
 	}
 };
 
