@@ -298,6 +298,19 @@ public:
 
 		return c;
 	}
+
+	// Slow transpose
+	VMatrix<T> transpose() const {
+		VMatrix<T> c(this->columnLength, this->rowLength, T(0.0f));
+
+		for (uint i = 0; i < rowLength; i++) {
+			for (uint j = 0; j < columnLength; j++) {
+				c.set(j, i, get(i, j));
+			}
+		}
+
+		return c;
+	}
 	
 	// Fast transpose, only works with single vectors
 	VMatrix<T> qTranspose() const {
