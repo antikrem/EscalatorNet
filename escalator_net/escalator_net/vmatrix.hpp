@@ -16,15 +16,15 @@
 #include "types.hpp"
 #include "alg.hpp"
 
- /* Matrix contains 3 templated properies:
-  * T: The type of each cell
-  * R, C: The number of rows and number of columns respectivly
-  * Has support for basic matrix operations
+ /* Implementation of a variable matrix
+  * Has run-time specified dimensions
+  * T: element type
   */
 template <typename T = double>
 class VMatrix {
 
 private:
+	// Dimensions of matrix, internally managed
 	uint rowLength;
 	uint columnLength;
 	uint length;
@@ -168,17 +168,14 @@ public:
 		// Assert matrix dimensions are the same
 		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength && "Matrix safe assignment requries the same dimensions");
 
-		alg::fill(data, length, T(0.0));
-
-		for (uint i = 0; i < length; i++) {
-			this->data[i] += b.data[i];
-		}
+		alg::copy(b.data, this->data, length);
 
 		return *this;
 	}
 
 	// Assigns this VMatrix to be an exact deep copy of another
 	// No restriction on size of matrix
+	// This matrix will change size to acommodate
 	void assign(const VMatrix& b) {
 		this->rowLength = b.rowLength;
 		this->columnLength = b.columnLength;
