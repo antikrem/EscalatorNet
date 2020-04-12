@@ -59,6 +59,36 @@ namespace tests {
 		std::cout << "SOLUTION:" << std::endl << b.transpose() << std::endl;
 	}
 
+	/* Implementation of OR gate
+	 */
+	void sn_ORGate() {
+		Node a = Node<double>(FunctionTypes::sigmoid, 2);
+
+		VMatrix<double> input(
+			{
+				{0.0, 0.0},
+				{1.0, 0.0},
+				{0.0, 1.0},
+				{1.0, 1.0}
+			}
+		);
+
+		VMatrix<double> output(
+			{
+				{0.0},
+				{1.0},
+				{1.0},
+				{1.0}
+			}
+		);
+
+		a.forwardPropogation(input);
+		auto b = a.optimise(output);
+
+		std::cout << a << std::endl;
+		std::cout << "INPUT:" << std::endl << input.transpose() << std::endl;
+		std::cout << "SOLUTION:" << std::endl << b.transpose() << std::endl;
+	}
 
 	/* Runs all test
 	*/
@@ -66,10 +96,14 @@ namespace tests {
 		std::cout << "Detector:" << std::endl;
 		sn_detector();
 		std::cout << std::endl;
+
 		std::cout << "AND Gate:" << std::endl;
 		sn_ANDGate();
 		std::cout << std::endl;
 
+		std::cout << "OR Gate:" << std::endl;
+		sn_ORGate();
+		std::cout << std::endl;
 	}
 }
 
