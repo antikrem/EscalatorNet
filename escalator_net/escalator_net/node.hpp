@@ -6,6 +6,13 @@
 #include "functions.hpp"
 #include "rand_ex.hpp"
 
+// Forward declaraction of Node class for use by outstream operator declaraction
+template <typename T>
+class Node;
+
+// Forward declaration of stream output
+template <typename T> static std::ostream& operator<<(std::ostream& os, const Node<T>& n);
+
 /* Node in a neural network
  * templated to support different variable types
  */
@@ -21,10 +28,11 @@ class Node {
 	const T activationThreshold = T(0.5);
 
 	// Finite step difference constant
-	const T H = T(0.1);
+	const T H = T(0.001);
 
-	// Learning rate constant
-	const T L_RATE = T(0.1);
+	/// Learning hyper parameters
+	// Learning rate 
+	const T L_RATE = T(0.25);
 	// Cost optimisation threshold
 	const T C_THRESH = T(0.01);
 
@@ -47,6 +55,9 @@ class Node {
 	void randomiseWeights() {
 		rand_ex::sampleNextUniforms(weight.get(), inputSize, 0.0, 1.0);
 	}
+
+	// Declare outstream print as a friend <3
+	template <typename T> friend std::ostream& operator<<(std::ostream& os, const Node<T>& n);
 
 public:
 	/* Takes FunctionTypes as parameter
@@ -187,5 +198,15 @@ public:
 	}
 
 };
+
+
+template <typename T>
+static std::ostream& operator<<(std::ostream& os, const Node<T>& n)
+{
+	std::cout << "NODE: " << Functions<T>::getFunctionName(n.activationFunctionType) << std::endl;
+	std::cout << "WEIGHT: " << n.weight.qTranspose() << std::endl;
+	std::cout << "BIAS: " << n.bias << std::endl;
+	return os;
+}
 
 #endif
