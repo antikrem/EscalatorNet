@@ -43,7 +43,7 @@ public:
 	}
 
 private:
-	/* Data is stored on the heap  as a 2D array
+	/* Data is stored on the heap as a 2D array
 	 *
 	 * Translation to get index i from (x, y), where x is how far to the right, and y is how far down:
 	 * F: (x,y) -> i : y * C + x
@@ -339,13 +339,18 @@ public:
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const VMatrix<T>& m)
+static std::ostream& operator<<(std::ostream& os, const VMatrix<T>& m)
 {
 	for (uint j = 0; j < m.getColumnLength(); j++) {
+		// Only print after first line
+		if (j) {
+			os << std::endl;
+		}
+
 		for (uint i = 0; i < m.getRowLength(); i++) {
 			os << m.get(i, j) << " ";
 		}
-		os << std::endl;
+		
 	}
 	return os;
 }
