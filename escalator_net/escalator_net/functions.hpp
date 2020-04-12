@@ -8,7 +8,9 @@
 
 // 
 enum FunctionTypes {
-	sigmoid
+	sigmoid,
+	ReLU,
+	linear
 };
 
 // List of templated functions for use
@@ -28,11 +30,27 @@ public:
 		return sigmoid(x) * (1 - sigmoid(x));
 	}
 
+	// Implementation of ReLU
+	static T ReLU(T x) {
+		return x < T(0) ? 0 : x;
+	}
+
+	// Implementation of linear pass
+	static T linear(T x) {
+		return x < T(0) ? 0 : x;
+	}
+
 	// Returns corresponding function
 	static function_ptr getFunction(FunctionTypes type) {
 		switch (type) {
 		case FunctionTypes::sigmoid:
 			return Functions::sigmoid;
+
+		case FunctionTypes::ReLU:
+			return Functions::ReLU;
+
+		case FunctionTypes::linear:
+			return Functions::linear;
 
 		default:
 			return nullptr;
