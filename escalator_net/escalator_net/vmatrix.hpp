@@ -284,6 +284,15 @@ public:
 		return c;
 	}
 	
+	// Fast transpose, only works with single vectors
+	VMatrix<T> qTranspose() const {
+		assert(rowLength == 1 || columnLength == 1 && "qTransport only supported on vectors");
+		VMatrix<T> c(*this);
+
+		std::swap(c.rowLength, c.columnLength);
+
+		return c;
+	}
 };
 
 template <typename T>
