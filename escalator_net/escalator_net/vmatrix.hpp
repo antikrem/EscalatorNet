@@ -11,6 +11,8 @@
 #include <iostream>
 #include <functional>
 
+#include <vector>
+
 #include "types.hpp"
 #include "alg.hpp"
 
@@ -144,6 +146,21 @@ public:
 				set(i, j, generator(i, j));
 			}
 		}
+	}
+
+	// Creates a VMatrix from a vector of vectors
+	// Each sub vector is a row
+	// NO INPUT CHECKING ON VECTOR LENGTHS (TODO)
+	VMatrix(std::vector<std::vector<T>> input)
+		: rowLength(input[0].size()), columnLength(input.size()), length(rowLength * columnLength) {
+
+		data = (T*)malloc(sizeof(T) * length);
+
+		for (uint j = 0; j < columnLength; j++) {
+			// copy in all data from vector
+			std::copy(input[j].data(), input[j].data() + rowLength, data + j * rowLength);
+		}
+		
 	}
 
 	// Fixed size assignment operator
