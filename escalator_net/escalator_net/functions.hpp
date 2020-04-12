@@ -3,10 +3,12 @@
 #ifndef __FUNCTIONS__
 #define __FUNCTIONS__
 
-#include "types.hpp"
 #include <algorithm>
+#include <string>
 
-// 
+#include "types.hpp"
+
+// Different types of activation functions 
 enum FunctionTypes {
 	sigmoid,
 	ReLU,
@@ -35,9 +37,9 @@ public:
 		return x < T(0) ? 0 : x;
 	}
 
-	// Implementation of linear pass
+	// Implementation of linear pass through
 	static T linear(T x) {
-		return x < T(0) ? 0 : x;
+		return x;
 	}
 
 	// Returns corresponding function
@@ -54,6 +56,23 @@ public:
 
 		default:
 			return nullptr;
+		}
+	}
+
+	// Returns a string name to a corresponding function type
+	static std::string getFunctionName(FunctionTypes type) {
+		switch (type) {
+		case FunctionTypes::sigmoid:
+			return "sigmoid";
+
+		case FunctionTypes::ReLU:
+			return "ReLU";
+
+		case FunctionTypes::linear:
+			return "linear";
+
+		default:
+			return "None";
 		}
 	}
 
