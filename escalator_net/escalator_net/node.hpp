@@ -144,8 +144,9 @@ public:
 
 	/* Optimises this node's weights given an observation
 	 * and internal input
+	 * Returns best(last) prediction
 	 */
-	void optimise(const VMatrix<T>& YObs) {
+	VMatrix<T> optimise(const VMatrix<T>& YObs) {
 		assert(YObs.getColumnLength() == input.getColumnLength() && "Observation is in the form (1, j)");
 
 		// Current prediction with given weight
@@ -160,13 +161,13 @@ public:
 
 			// Utilise gradient to compute new weights
 			weight = weight - computeWeightDerivatives(YObs) * L_RATE;
-			weight.clamp(-10000.0, 10000.0);
 
 			// Update cost with new weight
 			YPred = vPredict(input, weight, bias);
 			cost = computeCost(YPred, YObs);
-			std::cout << cost << std::endl;
 		}
+
+		return YPred;
 	}
 
 	// Conducts backwards step with input X
