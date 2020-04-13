@@ -163,6 +163,23 @@ public:
 		
 	}
 
+	// Extends this VMatrix by a single/many rows
+	// New rows come in as VMatrix of the same row size
+	void extend(const VMatrix<T>& input) {
+		assert(input.rowLength == rowLength && "Extending requires same row lengths");
+
+		columnLength += input.columnLength;
+		// remember where to start for extension to internal data
+		uint offset = length ;
+		length = columnLength * rowLength;
+
+		// extend data range
+		data = (T*)realloc(data, sizeof(T) * length);
+
+		// copy over data to end
+		alg::copy(input.data, data + offset, input.length);
+	}
+
 	// Fixed size assignment operator
 	VMatrix& operator=(const VMatrix& b) {
 		// Assert matrix dimensions are the same
@@ -275,6 +292,29 @@ public:
 		return c;
 	}
 
+	// Slow transpose
+	VMatrix<T> transpose() const {
+		VMatrix<T> c(this->columnLength, this->rowLength, T(0.0f));
+
+		for (uint i = 0; i < rowLength; i++) {
+			for (uint j = 0; j < columnLength; j++) {
+				c.set(j, i, get(i, j));
+			}
+		}
+
+		return c;
+	}
+	
+	// Fast transpose, only works with single vectors
+	VMatrix<T> qTranspose() const {
+		assert(rowLength == 1 || columnLength == 1 && "qTransport only supported on vectors");
+		VMatrix<T> c(*this);
+
+		std::swap(c.rowLength, c.columnLength);
+
+		return c;
+	}
+
 	// Sums all values in the matrix, and returns sum
 	T sum() const {
 		T sum = T(0);
@@ -295,29 +335,6 @@ public:
 			}
 			c.set(i, 0, v);
 		}
-
-		return c;
-	}
-
-	// Slow transpose
-	VMatrix<T> transpose() const {
-		VMatrix<T> c(this->columnLength, this->rowLength, T(0.0f));
-
-		for (uint i = 0; i < rowLength; i++) {
-			for (uint j = 0; j < columnLength; j++) {
-				c.set(j, i, get(i, j));
-			}
-		}
-
-		return c;
-	}
-	
-	// Fast transpose, only works with single vectors
-	VMatrix<T> qTranspose() const {
-		assert(rowLength == 1 || columnLength == 1 && "qTransport only supported on vectors");
-		VMatrix<T> c(*this);
-
-		std::swap(c.rowLength, c.columnLength);
 
 		return c;
 	}
