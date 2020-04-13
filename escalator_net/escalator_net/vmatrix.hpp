@@ -281,9 +281,27 @@ public:
 		return c;
 	}
 
+	// Conducts VMatrix elementwise multiplication
+	VMatrix elementMultiply(const VMatrix& b) const {
+		// Assert matrix dimensions for multiplication 
+		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength
+			&& "Matrix elementwise multiplication requries same size matrices");
+
+		// Create VMatrix to use as return
+		VMatrix c(this->rowLength, this->columnLength, T(0));
+
+		for (uint i = 0; i < c.rowLength; i++) {
+			for (uint j = 0; j < c.columnLength; j++) {
+				c.set(i, j, this->get(i, j) * b.get(i, j));
+			}
+		}
+
+		return c;
+	}
+
 	// Aplies a lambda F to each element in the function
 	// F : T -> T for each cell in matrix
-	VMatrix apply(T(*func)(T)) {
+	VMatrix apply(T(*func)(T)) const {
 		VMatrix c(*this);
 		for (uint i = 0; i < length; i++) {
 			c.data[i] = func(c.data[i]);
