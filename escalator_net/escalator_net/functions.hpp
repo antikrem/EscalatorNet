@@ -15,7 +15,6 @@ enum FunctionTypes {
 	sigmoid,
 	ReLU,
 	softplus,
-	linear
 };
 
 // List of templated functions for use
@@ -55,11 +54,6 @@ public:
 		return sigmoid(x);
 	}
 
-	// Implementation of linear pass through
-	static T linear(T x) {
-		return x;
-	}
-
 	// Returns corresponding function
 	static function_ptr getFunction(FunctionTypes type) {
 		switch (type) {
@@ -71,9 +65,6 @@ public:
 
 		case FunctionTypes::softplus:
 			return Functions::softplus;
-
-		case FunctionTypes::linear:
-			return Functions::linear;
 
 		default:
 			return nullptr;
@@ -91,9 +82,6 @@ public:
 
 		case FunctionTypes::softplus:
 			return "softplus";
-
-		case FunctionTypes::linear:
-			return "linear";
 
 		default:
 			return "None";
