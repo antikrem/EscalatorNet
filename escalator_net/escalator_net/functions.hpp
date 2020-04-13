@@ -14,6 +14,7 @@
 enum FunctionTypes {
 	sigmoid,
 	ReLU,
+	softplus,
 	linear
 };
 
@@ -26,7 +27,7 @@ public:
 
 	// Implementation of sigmoid function
 	static T sigmoid(T x) {
-		return 1 / (1 + exp(-x));
+		return T(1) / (T(1) + exp(-x));
 	}
 
 	// Implementation of sigmoid derivative
@@ -36,12 +37,22 @@ public:
 
 	// Implementation of ReLU
 	static T ReLU(T x) {
-		return x < T(0) ? 0 : x;
+		return x < T(0) ? T(0) : x;
 	}
 
 	// Implementation of ReLU derivative
 	static T ReLUDerivative(T x) {
-		return x < T(0) ? 0 : 1;
+		return x < T(0) ? T(0) : T(1);
+	}
+
+	// Implementation of softplus
+	static T softplus(T x) {
+		return log(T(1.0) + exp(x));
+	}
+
+	// Implementation of softplus derivative
+	static T softplusDerivative(T x) {
+		return sigmoid(x);
 	}
 
 	// Implementation of linear pass through
@@ -57,6 +68,9 @@ public:
 
 		case FunctionTypes::ReLU:
 			return Functions::ReLU;
+
+		case FunctionTypes::softplus:
+			return Functions::softplus;
 
 		case FunctionTypes::linear:
 			return Functions::linear;
@@ -75,6 +89,9 @@ public:
 		case FunctionTypes::ReLU:
 			return "ReLU";
 
+		case FunctionTypes::softplus:
+			return "softplus";
+
 		case FunctionTypes::linear:
 			return "linear";
 
@@ -91,6 +108,9 @@ public:
 		
 		case FunctionTypes::ReLU:
 			return Functions::ReLUDerivative;
+
+		case FunctionTypes::softplus:
+			return Functions::softplusDerivative;
 
 		default:
 			return nullptr;
