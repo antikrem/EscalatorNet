@@ -5,8 +5,10 @@
 
 #include <algorithm>
 #include <string>
+#include <math.h> 
 
 #include "types.hpp"
+
 
 // Different types of activation functions 
 enum FunctionTypes {
@@ -35,6 +37,11 @@ public:
 	// Implementation of ReLU
 	static T ReLU(T x) {
 		return x < T(0) ? 0 : x;
+	}
+
+	// Implementation of ReLU derivative
+	static T ReLUDerivative(T x) {
+		return x < T(0) ? 0 : 1;
 	}
 
 	// Implementation of linear pass through
@@ -81,6 +88,9 @@ public:
 		switch (type) {
 		case FunctionTypes::sigmoid:
 			return Functions::sigmoidDerivative;
+		
+		case FunctionTypes::ReLU:
+			return Functions::ReLUDerivative;
 
 		default:
 			return nullptr;
