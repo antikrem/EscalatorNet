@@ -7,16 +7,22 @@
 #include <iostream>
 
 #ifdef RUN_TESTS 
-#include "_tests.h"
+#include "_tests.hpp"
 #endif // RUN_TESTS
+
+#include "network.hpp"
 
 int main()
 {
 
-#ifdef RUN_TESTS 
-	tests::runAllTests();
 
+#ifdef RUN_TESTS 
+	rand_ex::reset();
+	tests::runAllTests();
 	system("pause");
+
 #endif // RUN_TESTS
+
+
 	
 }

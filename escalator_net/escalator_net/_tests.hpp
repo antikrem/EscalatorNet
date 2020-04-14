@@ -6,6 +6,7 @@
 
 #include "single_node.hpp"
 #include "single_layer.hpp"
+#include "shallow_network.hpp"
 
 namespace tests {
 	/* Prints small message about which tests should be run
@@ -19,8 +20,10 @@ namespace tests {
 	void runAllTests() {
 		declareTest("SINGLE_NODES");
 		runSingleNodeTests();
-		declareTest("SINGLELAYER");
+		declareTest("SINGLE_LAYER");
 		runSingleLayerTests();
+		declareTest("SINGLE_LAYER_SINGLE_NODE_NETWORKS");
+		runShallowNodeTests();
 	}
 }
 

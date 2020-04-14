@@ -1,5 +1,5 @@
 /* Small number of tests run
- * Used to check individual node performance*/
+ * Used to check individual layer*/
 #ifndef __SINGLE_LAYER__
 #define __SINGLE_LAYER__
 

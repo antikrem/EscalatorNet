@@ -71,10 +71,10 @@
     <ClInclude Include="network.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="simple_network.hpp">
+    <ClInclude Include="_tests.hpp">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
-    <ClInclude Include="_tests.hpp">
+    <ClInclude Include="shallow_network.hpp">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
   </ItemGroup>

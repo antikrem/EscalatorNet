@@ -166,7 +166,7 @@
     <ClInclude Include="network.hpp" />
     <ClInclude Include="node.hpp" />
     <ClInclude Include="rand_ex.hpp" />
-    <ClInclude Include="simple_network.hpp" />
+    <ClInclude Include="shallow_network.hpp" />
     <ClInclude Include="single_layer.hpp" />
     <ClInclude Include="single_node.hpp" />
     <ClInclude Include="types.hpp" />
