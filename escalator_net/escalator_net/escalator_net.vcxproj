@@ -168,7 +168,6 @@
     <ClInclude Include="rand_ex.hpp" />
     <ClInclude Include="shallow_network.hpp" />
     <ClInclude Include="single_layer.hpp" />
-    <ClInclude Include="single_node.hpp" />
     <ClInclude Include="types.hpp" />
     <ClInclude Include="vmatrix.hpp" />
     <ClInclude Include="_tests.hpp" />

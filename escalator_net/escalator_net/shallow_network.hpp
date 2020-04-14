@@ -10,7 +10,7 @@ namespace tests {
 	 * Predicts 1 on 1 input, 0 on 0 input
 	 */
 	void shn_detector() {
-		Network<double> net(1, FunctionTypes::LeakyReLU, { 1 });
+		Network<double> net(1, FunctionTypes::softplus, { 1 });
 
 		VMatrix<double> input(1, 2, 0.0);
 		input.set(0, 0, 0.0f);
@@ -57,7 +57,7 @@ namespace tests {
 	/* Implementation of OR gate
 	 */
 	void shn_ORGate() {
-		Network<double> net(2, FunctionTypes::LeakyReLU, { 1 });
+		Network<double> net(2, FunctionTypes::sigmoid, { 1 });
 
 		VMatrix<double> input(
 			{

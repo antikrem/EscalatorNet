@@ -59,9 +59,6 @@
     <ClInclude Include="rand_ex.hpp">
       <Filter>Header Files\helper</Filter>
     </ClInclude>
-    <ClInclude Include="single_node.hpp">
-      <Filter>Header Files\tests</Filter>
-    </ClInclude>
     <ClInclude Include="layer.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
