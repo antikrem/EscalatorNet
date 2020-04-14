@@ -65,5 +65,14 @@
     <ClInclude Include="single_node.hpp">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
+    <ClInclude Include="layer.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="single_layer.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="network.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

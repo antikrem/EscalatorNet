@@ -161,9 +161,12 @@
   <ItemGroup>
     <ClInclude Include="alg.hpp" />
     <ClInclude Include="functions.hpp" />
+    <ClInclude Include="layer.hpp" />
     <ClInclude Include="matrix.hpp" />
+    <ClInclude Include="network.hpp" />
     <ClInclude Include="node.hpp" />
     <ClInclude Include="rand_ex.hpp" />
+    <ClInclude Include="single_layer.hpp" />
     <ClInclude Include="single_node.hpp" />
     <ClInclude Include="types.hpp" />
     <ClInclude Include="vmatrix.hpp" />
