@@ -14,6 +14,7 @@
 enum FunctionTypes {
 	sigmoid,
 	ReLU,
+	LeakyReLU,
 	softplus,
 };
 
@@ -44,6 +45,16 @@ public:
 		return x < T(0) ? T(0) : T(1);
 	}
 
+	// Implementation of LeakyReLU
+	static T LeakyReLU(T x) {
+		return x < T(0) ? 0.1 * x : x;
+	}
+
+	// Implementation of LeakyReLU derivative
+	static T LeakyReLUDerivative(T x) {
+		return x < T(0) ? T(0.1) : T(1);
+	}
+
 	// Implementation of softplus
 	static T softplus(T x) {
 		return log(T(1.0) + exp(x));
@@ -63,6 +74,9 @@ public:
 		case FunctionTypes::ReLU:
 			return Functions::ReLU;
 
+		case FunctionTypes::LeakyReLU:
+			return Functions::LeakyReLU;
+
 		case FunctionTypes::softplus:
 			return Functions::softplus;
 
@@ -80,6 +94,9 @@ public:
 		case FunctionTypes::ReLU:
 			return "ReLU";
 
+		case FunctionTypes::LeakyReLU:
+			return "LeakyReLU";
+
 		case FunctionTypes::softplus:
 			return "softplus";
 
@@ -96,6 +113,9 @@ public:
 		
 		case FunctionTypes::ReLU:
 			return Functions::ReLUDerivative;
+
+		case FunctionTypes::LeakyReLU:
+			return Functions::LeakyReLUDerivative;
 
 		case FunctionTypes::softplus:
 			return Functions::softplusDerivative;
