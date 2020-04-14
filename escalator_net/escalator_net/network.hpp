@@ -21,7 +21,7 @@ private:
 	const T C_THRESH = T(0.01);
 
 	// Upperbound for total count
-	const uint ITER_MAX = 200;
+	const uint ITER_MAX = 2000;
 
 	// number of iterations for last optimisation
 	uint count = 0;
@@ -58,7 +58,7 @@ public:
 		lastPrediction.assign(input);
 
 		for (auto& i : layers) {
-			lastPrediction.assign(i.propogateForward(input));
+			lastPrediction.assign(i.propogateForward(lastPrediction));
 		}
 
 		return lastPrediction;
@@ -108,8 +108,6 @@ public:
 			count++;
 		}
 	}
-
-
 
 	// Makes prediction with given input
 	VMatrix<T> makePrediction(const VMatrix<T>& input) {
