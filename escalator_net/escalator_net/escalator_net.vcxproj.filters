@@ -36,6 +36,9 @@
     <ClCompile Include="rand_ex.cpp">
       <Filter>Source Files\helper</Filter>
     </ClCompile>
+    <ClCompile Include="stopwatch.cpp">
+      <Filter>Source Files\helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matrix.hpp">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="full_network.hpp">
       <Filter>Header Files\tests</Filter>
+    </ClInclude>
+    <ClInclude Include="stopwatch.hpp">
+      <Filter>Header Files\helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
