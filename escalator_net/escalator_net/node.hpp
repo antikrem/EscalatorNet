@@ -108,44 +108,23 @@ public:
 	}
 
 	/* Returns Z, which is the linear combination of input and weight + bias
-	 * each row is another input
+	 * Input is a matrix where each row is a set of input and each column is the i-th element in input
+	 * weight is a single width vertical vector, and bias a scalar
 	 */
 	VMatrix<T> computeZ(const VMatrix<T>& input, const VMatrix<T>& weight, const T& bias) {
 		assert(input.getRowLength() == inputSize && "Input must be accepted size of (inputSize, j)");
 		return (input * weight) + bias;
 	}
 
-	/* Applies activation to Z
-	*/
+	/* Applies activation function to z
+	 * Takes a matrix of given size, and return same size matrix
+	 */
 	VMatrix<T> computeA(const VMatrix<T>& z) {
 		return z.apply(activationFunction);
 	}
 
 	/* Computes rate of change for each weight
 	 */
-	// TODO: use central  finite difference
-	VMatrix<T> computeWeightDerivatives(VMatrix<T> YObs) { 
-		// A matrix that can be used to strech weight matrix into a square matrix
-		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
-
-		// Creates a matrix where each column is the weight
-		VMatrix<T> weightSquare = weight * stretcher;
-
-		// Each weight collumn is a different offset for corresponding weight
-		VMatrix<T> weightHSquare = weightSquare + (VMatrix<T>(weightSquare.getRowLength(), weightSquare.getColumnLength()) * H);
-
-		// Cost at input
-		VMatrix cost = vComputeCost(vPredict(input, weightSquare, bias), YObs * stretcher);
-		// Cost at input + h
-		VMatrix costH = vComputeCost(vPredict(input, weightHSquare, bias), YObs * stretcher);
-
-		// Return finite difference
-		return (costH - cost).qTranspose() * (T(1.0f) / H);
-	}
-
-	/* Computes rate of change for each weight
-	 */
-	 // TODO: use central  finite difference
 	VMatrix<T> computeWeightDerivativesAnalytically(VMatrix<T> YObs) {
 		// Compute each sub derivative in chain rule
 
@@ -162,21 +141,6 @@ public:
 		VMatrix<T> dzdw = input;
 
 		return dCda.elementMultiply(dadz).elementMultiply(dzdw);
-	}
-
-	/* Computes rate of change for bias through finite difference
-	*/
-	T computeBiasDerivative(VMatrix<T> YObs) {
-		// Creates a matrix where each column is the weight
-		T biasH = bias + H;
-
-		// Cost at input
-		T cost = computeCost(vPredict(input, weight, bias), YObs);
-		// Cost at input + h
-		T costH = computeCost(vPredict(input, weight, biasH), YObs);
-
-		// Return finite difference
-		return (costH - cost) * (T(1.0f) / H);
 	}
 
 	/* Computes cost derivative relative to bias analytically
@@ -208,47 +172,6 @@ public:
 				return pow(value, T(2));
 			}
 		).sum();
-	}
-
-	/* Computes multiple costs for multiple inputs
-	 * with existing prediction
-	 * return is of size (j, 1), with each column being a new 
-	 */
-	VMatrix<T> vComputeCost(const VMatrix<T>& YPred, const VMatrix<T>& YObs) {
-		// TODO: use cross-entropy cost
-		return (YPred - YObs).apply(
-			[](T value) {
-			return pow(value, 2);
-		}
-		).sumColumns();
-	}
-
-	/* Optimises this node's weights given an observation
-	 * and internal input
-	 * Returns best(last) prediction
-	 */
-	VMatrix<T> optimise(const VMatrix<T>& YObs) {
-		assert(YObs.getColumnLength() == input.getColumnLength() && "Observation is in the form (1, j)");
-
-		// Current prediction with given weight
-		VMatrix<T> YPred = vPredict(input, weight, bias);
-		T cost = computeCost(YPred, YObs);
-
-		// Continue until cost is within threshold
-		while (cost > C_THRESH) {
-			
-			// Utilise gradient to compute new bias
-			bias = bias - computeBiasDerivative(YObs) * L_RATE;
-
-			// Utilise gradient to compute new weights
-			weight = weight - computeWeightDerivatives(YObs) * L_RATE;
-
-			// Update cost with new weight
-			YPred = vPredict(input, weight, bias);
-			cost = computeCost(YPred, YObs);
-		}
-
-		return YPred;
 	}
 
 	// Conducts forwards propogation step with input X
@@ -283,7 +206,6 @@ public:
 	}
 
 };
-
 
 template <typename T>
 static std::ostream& operator<<(std::ostream& os, const Node<T>& n)
