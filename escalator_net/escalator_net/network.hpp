@@ -4,6 +4,7 @@
 #define __NETWORK__
 
 #include "layer.hpp"
+#include "stopwatch.hpp"
 
  // Forward declaraction of Node class for use by outstream operator declaraction
 template <typename T>
@@ -22,6 +23,9 @@ private:
 
 	// Upperbound for total count
 	const uint ITER_MAX = 2000;
+
+	// time taken
+	double executionTime = 0.0;
 
 	// number of iterations for last optimisation
 	uint count = 0;
@@ -96,6 +100,8 @@ public:
 
 		count = 0;
 
+		stopwatch::tic();
+
 		while (cost > C_THRESH && count < ITER_MAX) {
 			forwardPropogate(input);
 			cost = computeCost(YObs);
@@ -107,6 +113,8 @@ public:
 			backwardPropogate(YObs);
 			count++;
 		}
+
+		executionTime = stopwatch::tocGet();
 	}
 
 	// Makes prediction with given input
@@ -127,7 +135,8 @@ template <typename T>
 static std::ostream& operator<<(std::ostream& os, const Network<T>& n)
 {
 	std::cout << "NETWORK of " << n.layers.size() << " layers" << std::endl;
-	std::cout << "Converged: " << (n.cost < n.C_THRESH ? "TRUE" : "FALSE") << std::endl;
+	std::cout << "Converged: " << (n.cost < n.C_THRESH ? "TRUE" : "FALSE") 
+		<< " IN " << n.executionTime << " seconds" << std::endl;
 	std::cout << "Iterations: " << n.count << std::endl;
 	std::cout << "Cost: " << n.cost;
 	return os;
