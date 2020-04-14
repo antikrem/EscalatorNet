@@ -3,7 +3,9 @@
 #define ___TESTS__
 
 #include <iostream>
+
 #include "single_node.hpp"
+#include "single_layer.hpp"
 
 namespace tests {
 	/* Prints small message about which tests should be run
@@ -17,6 +19,8 @@ namespace tests {
 	void runAllTests() {
 		declareTest("SINGLE_NODES");
 		runSingleNodeTests();
+		declareTest("SINGLELAYER");
+		runSingleLayerTests();
 	}
 }
 
