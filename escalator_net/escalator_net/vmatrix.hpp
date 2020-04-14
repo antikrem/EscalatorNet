@@ -180,6 +180,17 @@ public:
 		alg::copy(input.data, data + offset, input.length);
 	}
 
+	// Returns a matrix 
+	VMatrix<T> getColumn(uint row) const {
+		VMatrix<T> c(1, this->columnLength, T(0.0));
+
+		for (uint i = 0; i < this->columnLength; i++) {
+			c.set(0, i, this->get(row, i));
+		}
+
+		return c;
+	}
+
 	// Fixed size assignment operator
 	VMatrix& operator=(const VMatrix& b) {
 		// Assert matrix dimensions are the same
