@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alg.hpp" />
+    <ClInclude Include="full_network.hpp" />
     <ClInclude Include="functions.hpp" />
     <ClInclude Include="layer.hpp" />
     <ClInclude Include="matrix.hpp" />

@@ -6,6 +6,7 @@
 
 #include "single_layer.hpp"
 #include "shallow_network.hpp"
+#include "full_network.hpp"
 
 namespace tests {
 	/* Prints small message about which tests should be run
@@ -21,6 +22,8 @@ namespace tests {
 		runSingleLayerTests();
 		declareTest("SINGLE_LAYER_SINGLE_NODE_NETWORKS");
 		runShallowNodeTests();
+		declareTest("FEED_FORWARD");
+		runFeedForwardTests();
 	}
 }
 
