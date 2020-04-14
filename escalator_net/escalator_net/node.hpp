@@ -49,8 +49,22 @@ class Node {
 
 	/// Forward propogation step
 
-	// Forward propogation step input
+	// Forward propogation step seeded input input
 	VMatrix<T> input = VMatrix<T>(1, 1);
+
+	// Forward propogation step computed z
+	VMatrix<T> z = VMatrix<T>(1, 1);
+
+	// Forward propogation step computed activation
+	VMatrix<T> a = VMatrix<T>(1, 1);
+
+	/// Backwards propogation step
+
+	// Change in weight computed after weight computation
+	VMatrix<T> dWeight;
+
+	// Change in bias computed after weight computation
+	T dBias = 0;
 
 	// Randomize weights
 	void randomiseWeights() {
@@ -64,9 +78,10 @@ public:
 	/* Takes FunctionTypes as parameter
 	 */
 	Node(typename FunctionTypes activationFunctionType, int inputSize)
-	: inputSize(inputSize), weight(1, inputSize, 0) {
+	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(1, inputSize, T(0)) {
 		this->activationFunctionType = activationFunctionType;
 		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
+		this->activationFunctionDerivative = Functions<T>::getFunctionDerivative(activationFunctionType);
 		randomiseWeights();
 	}
 
@@ -92,6 +107,20 @@ public:
 		return z.apply(activationFunction);
 	}
 
+	/* Returns Z, which is the linear combination of input and weight + bias
+	 * each row is another input
+	 */
+	VMatrix<T> computeZ(const VMatrix<T>& input, const VMatrix<T>& weight, const T& bias) {
+		assert(input.getRowLength() == inputSize && "Input must be accepted size of (inputSize, j)");
+		return (input * weight) + bias;
+	}
+
+	/* Applies activation to Z
+	*/
+	VMatrix<T> computeA(const VMatrix<T>& z) {
+		return z.apply(activationFunction);
+	}
+
 	/* Computes rate of change for each weight
 	 */
 	// TODO: use central  finite difference
@@ -114,7 +143,28 @@ public:
 		return (costH - cost).qTranspose() * (T(1.0f) / H);
 	}
 
-	/* Computes rate of change for bias
+	/* Computes rate of change for each weight
+	 */
+	 // TODO: use central  finite difference
+	VMatrix<T> computeWeightDerivativesAnalytically(VMatrix<T> YObs) {
+		// Compute each sub derivative in chain rule
+
+		// Matrices will need to be streched to acomodate each weight
+		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
+
+		// Cost relative to this nodes activation
+		VMatrix<T> dCda = (a - YObs) * T(2.0) * stretcher;
+
+		// activation relative to z
+		VMatrix<T> dadz = z.apply(activationFunctionDerivative) * stretcher;
+
+		// z relative to bias
+		VMatrix<T> dzdw = input;
+
+		return dCda.elementMultiply(dadz).elementMultiply(dzdw);
+	}
+
+	/* Computes rate of change for bias through finite difference
 	*/
 	T computeBiasDerivative(VMatrix<T> YObs) {
 		// Creates a matrix where each column is the weight
@@ -129,6 +179,25 @@ public:
 		return (costH - cost) * (T(1.0f) / H);
 	}
 
+	/* Computes cost derivative relative to bias analytically
+	 * For current values of z and a
+	 */
+	VMatrix<T> computeBiasDerivativeAnalytically(VMatrix<T> YObs) {
+		// Compute each sub derivative in chain rule
+		
+		// Cost relative to this nodes activation
+		VMatrix<T> dCda = (a - YObs) * T(2.0);
+
+		// activation relative to z
+		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
+
+		// z relative to bias
+		T dzdb = T(1.0);
+
+		return dadz.elementMultiply(dCda) * dzdb;
+	}
+
+
 	/* Computes cost for multiple inputs
 	 * with existing prediction
 	 */
@@ -136,7 +205,7 @@ public:
 		// TODO: use cross-entropy cost
 		return (YPred - YObs).apply(
 			[](T value) {
-				return pow(value, 2);
+				return pow(value, T(2));
 			}
 		).sum();
 	}
@@ -167,8 +236,8 @@ public:
 
 		// Continue until cost is within threshold
 		while (cost > C_THRESH) {
+			
 			// Utilise gradient to compute new bias
-
 			bias = bias - computeBiasDerivative(YObs) * L_RATE;
 
 			// Utilise gradient to compute new weights
@@ -182,20 +251,35 @@ public:
 		return YPred;
 	}
 
-	// Conducts backwards step with input X
+	// Conducts forwards propogation step with input X
 	// Where each row is a vector of input
-	// Returns YPred, a matrix (1, j), with each row is a result for corresponding input
+	// Returns activation of this node (1, j) where each row is activation for each input
 	VMatrix<T> forwardPropogation(const VMatrix<T>& X) {
+		// Apply gradient descent from previous back propogation
+		weight = weight - dWeight;
+		bias = bias - dBias;
+
 		// Set input for backprop
 		input.assign(X);
 
-		// Compute output of this node
-		return vPredict(input, weight, bias);
+		// Compute z of this node
+		z.assign(computeZ(input, weight, bias));
+
+		// Compute activation of this node
+		a.assign(computeA(z));
+		return a;
 	}
 
 	// Backwards propogation step, takes required prediction
-	VMatrix<T> backwardsPropogation(const VMatrix<T>& YOb) {
+	// And optimises weight and bias by a single step
+	VMatrix<T> backwardsPropogation(const VMatrix<T>& YObs) {
+		// Compute change in cost relative to bias and weight
+		dWeight = computeWeightDerivativesAnalytically(YObs).sumColumns().qTranspose() * T(1 / T(YObs.getColumnLength()));
 		
+		// Compute change in cost relative to bias and weight
+		dBias = computeBiasDerivativeAnalytically(YObs).sum() * T(1 / T(YObs.getColumnLength()));
+		
+		return YObs;
 	}
 
 };
