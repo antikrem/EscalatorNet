@@ -25,9 +25,6 @@ class Node {
 	typename Functions<T>::function_ptr activationFunction = nullptr;
 	typename Functions<T>::function_ptr activationFunctionDerivative = nullptr;
 
-	// Threshold for a node activation
-	const T activationThreshold = T(0.5);
-
 	// Finite step difference constant
 	const T H = T(0.001);
 
@@ -125,8 +122,10 @@ public:
 
 	/* Computes rate of change for each weight
 	 */
-	VMatrix<T> computeWeightDerivativesAnalytically(VMatrix<T> YObs) {
+	VMatrix<T> computeDCostDWeight(VMatrix<T> YObs) {
 		// Compute each sub derivative in chain rule
+		// Recall:
+		// dC/dw = dz/dw da/dz dC/da
 
 		// Matrices will need to be streched to acomodate each weight
 		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
@@ -146,8 +145,10 @@ public:
 	/* Computes cost derivative relative to bias analytically
 	 * For current values of z and a
 	 */
-	VMatrix<T> computeBiasDerivativeAnalytically(VMatrix<T> YObs) {
+	VMatrix<T> computeDCostDBias(VMatrix<T> YObs) {
 		// Compute each sub derivative in chain rule
+		// Recall:
+		// dC/db = dz/db da/dz dC/da
 		
 		// Cost relative to this nodes activation
 		VMatrix<T> dCda = (a - YObs) * T(2.0);
@@ -174,9 +175,10 @@ public:
 		).sum();
 	}
 
-	// Conducts forwards propogation step with input X
-	// Where each row is a vector of input
-	// Returns activation of this node (1, j) where each row is activation for each input
+	/* Conducts forwards propogation step with input X
+	 * Where each row is a vector of input
+	 * Returns activation of this node (1, j) where each row is activation for each input
+	 */
 	VMatrix<T> forwardPropogation(const VMatrix<T>& X) {
 		// Apply gradient descent from previous back propogation
 		weight = weight - dWeight;
@@ -193,14 +195,17 @@ public:
 		return a;
 	}
 
-	// Backwards propogation step, takes required prediction
-	// And optimises weight and bias by a single step
+	/* Backwards propogation step, takes required prediction
+	 * And optimises weight and bias by a single step
+	 */
 	VMatrix<T> backwardsPropogation(const VMatrix<T>& YObs) {
+		// Compute gradients of cost for parameters for gradient descent
+		// Gradient will be averaged given the number of columns
+
 		// Compute change in cost relative to bias and weight
-		dWeight = computeWeightDerivativesAnalytically(YObs).sumColumns().qTranspose() * T(1 / T(YObs.getColumnLength()));
-		
+		dWeight = computeDCostDWeight(YObs).sumColumns().qTranspose() * T(1 / T(YObs.getColumnLength()));
 		// Compute change in cost relative to bias and weight
-		dBias = computeBiasDerivativeAnalytically(YObs).sum() * T(1 / T(YObs.getColumnLength()));
+		dBias = computeDCostDBias(YObs).sum() * T(1 / T(YObs.getColumnLength()));
 		
 		return YObs;
 	}
