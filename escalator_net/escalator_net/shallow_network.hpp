@@ -82,6 +82,34 @@ namespace tests {
 		net.predict(input);
 	}
 
+	/* 2 node, single layer network
+	 */
+	void shn_ANDORGate() {
+		Network<double> net(2, FunctionTypes::sigmoid, { 2 });
+
+		VMatrix<double> input(
+			{
+				{0.0, 0.0},
+				{1.0, 0.0},
+				{0.0, 1.0},
+				{1.0, 1.0}
+			}
+		);
+
+		VMatrix<double> output(
+			{
+				{0.0, 0.0},
+				{0.0, 1.0},
+				{0.0, 1.0},
+				{1.0, 1.0}
+			}
+		);
+
+		net.optimiseNetwork(input, output);
+		std::cout << net << std::endl;
+		net.predict(input);
+	}
+
 	/* Runs all test
 	*/
 	void runShallowNodeTests() {
@@ -95,6 +123,10 @@ namespace tests {
 
 		std::cout << "OR Gate:" << std::endl;
 		shn_ORGate();
+		std::cout << std::endl;
+
+		std::cout << "AND/OR Gate:" << std::endl;
+		shn_ANDORGate();
 		std::cout << std::endl;
 	}
 }
