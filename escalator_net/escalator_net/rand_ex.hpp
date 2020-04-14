@@ -12,6 +12,9 @@ namespace rand_ex {
 	// Gets reference to random engine
 	std::default_random_engine& getRandomEngine();
 
+	// Reset random number generator
+	void reset();
+
 	// Returns next instance of a given template
 	template<typename T>
 	T sampleNextUniform(T a, T b) {
