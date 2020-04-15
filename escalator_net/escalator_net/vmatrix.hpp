@@ -93,8 +93,14 @@ public:
 	}
 
 	// gets data directly
-	T* get() const {
+	T* qGet() const {
 		return data;
+	}
+
+	// Fast get, will return the ith component in 2D internal array
+	T qGet(uint i) const {
+		assert(i < length && "Attempt to qGet outside of possible range");
+		return data[i];
 	}
 
 	// Frees VMatrix
@@ -109,7 +115,7 @@ public:
 
 		data = (T*)malloc(sizeof(T) * length);
 
-		alg::copy(ref.get(), data, length);
+		alg::copy(ref.qGet(), data, length);
 	}
 
 	// Generates identity matrix

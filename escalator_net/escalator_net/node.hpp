@@ -80,7 +80,7 @@ class Node {
 
 	// Randomize weights
 	void randomiseWeights() {
-		rand_ex::sampleNextUniforms(weight.get(), inputSize, 0.0, 1.0);
+		rand_ex::sampleNextUniforms(weight.qGet(), inputSize, 0.0, 1.0);
 	}
 
 	// Declare outstream print as a friend <3
@@ -280,8 +280,8 @@ public:
 	/* Gets input, where each column is the for the kth prior node
 	 * and each row is a new input
 	 */
-	VMatrix<T> getWeight() const {
-		return weight.transpose();
+	T getWeight(uint i) const {
+		return weight.qGet(i);
 	}
 };
 
