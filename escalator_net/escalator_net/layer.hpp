@@ -52,12 +52,12 @@ public:
 	 * Where each row is a new input
 	 * And each column is the expected output from the ith node in this layer
 	 */
-	void propogateBackwards(const VMatrix<T>& YObs) {
+	void propogateBackwards(const VMatrix<T>& dCda) {
 		// Check there is a row for each 
-		assert(nodes.size() == YObs.getRowLength());
+		assert(nodes.size() == dCda.getRowLength());
 
 		for (uint i = 0; i < nodes.size(); i++) {
-			nodes[i].backwardsPropogation(YObs.getColumn(i));
+			nodes[i].backwardsPropogation(dCda.getColumn(i));
 		}
 	}
 };

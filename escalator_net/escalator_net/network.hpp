@@ -70,18 +70,19 @@ public:
 
 	// Compute the rate of change of cost
 	// relative to the activation of the output layer
+	VMatrix<T> computeDCDa(const VMatrix<T> activation, const VMatrix<T> YObs) {
+		return (activation - YObs) * T(2.0);
+	}
 
 	// Backwards propogation step
 	// Takes Matrix where each column is the expected output
 	// Of the ith node in the output layer
 	// And each column corresponds to a new input
-	VMatrix<T> backwardPropogate(const VMatrix<T>& YObs) {
+	void backwardPropogate(const VMatrix<T>& dCda) {
 
 		for (uint i = layers.size(); i--;) {
-			layers[i].propogateBackwards(YObs);
+			layers[i].propogateBackwards(dCda);
 		}
-
-		return YObs;
 	}
 
 	// Calculates cost given the last forward prediction
@@ -95,7 +96,7 @@ public:
 					return pow(value, T(2));
 				}
 			).sum();
-	}
+	}	
 
 	// Optimises this network given input and observed
 	void optimiseNetwork(const VMatrix<T>& input, const VMatrix<T>& YObs, bool print = false) {
@@ -106,14 +107,19 @@ public:
 		stopwatch::tic();
 
 		while (cost > C_THRESH && count < ITER_MAX) {
-			forwardPropogate(input);
+			// capture activation from forward propogation
+			VMatrix<T> activations = forwardPropogate(input);
 			cost = computeCost(YObs);
 
 			if (print) {
 				std::cout << cost << std::endl;
 			}
 
-			backwardPropogate(YObs);
+			// Compute dCda, where each row is for a new input
+			// and each column corresposnds to an activation
+			VMatrix<T> dCda = computeDCDa(activations, YObs);
+
+			backwardPropogate(dCda);
 			count++;
 		}
 

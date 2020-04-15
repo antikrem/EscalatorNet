@@ -134,7 +134,7 @@ public:
 
 	/* Computes rate of change for each weight
 	 */
-	VMatrix<T> computeDCostDWeight(VMatrix<T> YObs) {
+	VMatrix<T> computeDCostDWeight(VMatrix<T> dCdaIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/dw = dz/dw da/dz dC/da
@@ -143,7 +143,7 @@ public:
 		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
 
 		// Cost relative to this nodes activation
-		VMatrix<T> dCda = (a - YObs) * T(2.0) * stretcher;
+		VMatrix<T> dCda = dCdaIN * stretcher;
 
 		// activation relative to z
 		VMatrix<T> dadz = z.apply(activationFunctionDerivative) * stretcher;
@@ -157,13 +157,13 @@ public:
 	/* Computes cost derivative relative to bias analytically
 	 * For current values of z and a
 	 */
-	VMatrix<T> computeDCostDBias(VMatrix<T> YObs) {
+	VMatrix<T> computeDCostDBias(VMatrix<T> dCdaIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/db = dz/db da/dz dC/da
 		
 		// Cost relative to this nodes activation
-		VMatrix<T> dCda = (a - YObs) * T(2.0);
+		VMatrix<T>& dCda = dCdaIN;
 
 		// activation relative to z
 		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
@@ -177,7 +177,7 @@ public:
 	/* Computes cost derivative relative to in input of this bias (activation of last layer)
 	 * For current values of weight and bias
 	 */
-	VMatrix<T> computeDCostDinput(VMatrix<T> YObs) {
+	VMatrix<T> computeDCostDinput(VMatrix<T> dCdaIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/dIn = dz/dIn da/dz dC/da
@@ -186,7 +186,7 @@ public:
 		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
 
 		// Cost relative to this nodes activation
-		VMatrix<T> dCda = (a - YObs) * T(2.0) * stretcher;
+		VMatrix<T> dCda = dCdaIN * stretcher;
 
 		// activation relative to z
 		VMatrix<T> dadz = z.apply(activationFunctionDerivative) * stretcher;
@@ -234,22 +234,20 @@ public:
 	/* Backwards propogation step, takes required prediction
 	 * And optimises weight and bias by a single step
 	 */
-	VMatrix<T> backwardsPropogation(const VMatrix<T>& YObs) {
+	void backwardsPropogation(const VMatrix<T>& dCda) {
 		// Compute gradients of cost for parameters for gradient descent
 		// Gradient will be averaged over each 
 
 		// Compute change in cost relative to bias and weight
-		dWeightV.assign(computeDCostDWeight(YObs));
-		dWeight = dWeightV.sumColumns() * T(1 / T(YObs.getColumnLength()));
+		dWeightV.assign(computeDCostDWeight(dCda));
+		dWeight = dWeightV.sumColumns() * T(1 / T(dCda.getColumnLength()));
 
 		// Compute change in cost relative to bias and weight
-		dBiasV.assign(computeDCostDBias(YObs));
-		dBias = dBiasV.sum() * T(1 / T(YObs.getColumnLength()));
+		dBiasV.assign(computeDCostDBias(dCda));
+		dBias = dBiasV.sum() * T(1 / T(dCda.getColumnLength()));
 
 		// Compute change in cost relative to input from previous level
-		dInput.assign(computeDCostDinput(YObs).sumColumns() * T(1 / T(YObs.getColumnLength())));
-		
-		return YObs;
+		dInput.assign(computeDCostDinput(dCda).sumColumns() * T(1 / T(dCda.getColumnLength())));
 	}
 
 };
