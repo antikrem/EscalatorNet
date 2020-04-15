@@ -22,7 +22,7 @@ private:
 	const T C_THRESH = T(0.01);
 
 	// Upperbound for total count
-	const uint ITER_MAX = 2000;
+	const uint ITER_MAX = 5000;
 
 	// time taken
 	double executionTime = 0.0;

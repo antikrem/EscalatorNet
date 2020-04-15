@@ -134,7 +134,7 @@ public:
 
 	/* Computes rate of change for each weight
 	 */
-	VMatrix<T> computeDCostDWeight(VMatrix<T> dCdaIN) {
+	VMatrix<T> computeDCostDWeight(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/dw = dz/dw da/dz dC/da
@@ -146,7 +146,7 @@ public:
 		VMatrix<T> dCda = dCdaIN * stretcher;
 
 		// activation relative to z
-		VMatrix<T> dadz = z.apply(activationFunctionDerivative) * stretcher;
+		VMatrix<T> dadz = dadzIN * stretcher;
 
 		// z relative to bias
 		VMatrix<T> dzdw = input;
@@ -157,16 +157,16 @@ public:
 	/* Computes cost derivative relative to bias analytically
 	 * For current values of z and a
 	 */
-	VMatrix<T> computeDCostDBias(VMatrix<T> dCdaIN) {
+	VMatrix<T> computeDCostDBias(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/db = dz/db da/dz dC/da
 		
 		// Cost relative to this nodes activation
-		VMatrix<T>& dCda = dCdaIN;
+		const VMatrix<T>& dCda = dCdaIN;
 
 		// activation relative to z
-		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
+		const VMatrix<T>& dadz = dadzIN;
 
 		// z relative to bias
 		T dzdb = T(1.0);
@@ -177,7 +177,7 @@ public:
 	/* Computes cost derivative relative to in input of this bias (activation of last layer)
 	 * For current values of weight and bias
 	 */
-	VMatrix<T> computeDCostDinput(VMatrix<T> dCdaIN) {
+	VMatrix<T> computeDCostDinput(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/dIn = dz/dIn da/dz dC/da
@@ -189,7 +189,7 @@ public:
 		VMatrix<T> dCda = dCdaIN * stretcher;
 
 		// activation relative to z
-		VMatrix<T> dadz = z.apply(activationFunctionDerivative) * stretcher;
+		VMatrix<T> dadz = dadzIN * stretcher;
 
 		// z relative to input
 		VMatrix<T> dzdIn = input;
@@ -236,18 +236,21 @@ public:
 	 */
 	void backwardsPropogation(const VMatrix<T>& dCda) {
 		// Compute gradients of cost for parameters for gradient descent
-		// Gradient will be averaged over each 
+		// Gradient will be averaged over each input set
+
+		// compute shared sub-derivative dadz
+		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
 
 		// Compute change in cost relative to bias and weight
-		dWeightV.assign(computeDCostDWeight(dCda));
+		dWeightV.assign(computeDCostDWeight(dCda, dadz));
 		dWeight = dWeightV.sumColumns() * T(1 / T(dCda.getColumnLength()));
 
 		// Compute change in cost relative to bias and weight
-		dBiasV.assign(computeDCostDBias(dCda));
+		dBiasV.assign(computeDCostDBias(dCda, dadz));
 		dBias = dBiasV.sum() * T(1 / T(dCda.getColumnLength()));
 
 		// Compute change in cost relative to input from previous level
-		dInput.assign(computeDCostDinput(dCda).sumColumns() * T(1 / T(dCda.getColumnLength())));
+		dInput.assign(computeDCostDinput(dCda, dadz).sumColumns() * T(1 / T(dCda.getColumnLength())));
 	}
 
 };
