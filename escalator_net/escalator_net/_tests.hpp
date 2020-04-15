@@ -20,7 +20,7 @@ namespace tests {
 	void runAllTests() {
 		declareTest("SINGLE_LAYER");
 		runSingleLayerTests();
-		declareTest("SINGLE_LAYER_SINGLE_NODE_NETWORKS");
+		declareTest("SINGLE_LAYER_NETWORKS");
 		runShallowNodeTests();
 		declareTest("FEED_FORWARD");
 		runFeedForwardTests();

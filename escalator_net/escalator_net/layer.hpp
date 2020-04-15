@@ -37,7 +37,7 @@ public:
 	 */
 	VMatrix<T> propogateForward(const VMatrix<T>& input) {
 		assert(INPUTSIZE == input.getRowLength());
-		// Results matrix
+		// Results matrix, will be extended transposed
 		VMatrix<T> results(input.getColumnLength(), 0, T(0.0));
 
 		for (Node<T>& node : nodes) {

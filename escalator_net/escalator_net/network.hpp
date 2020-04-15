@@ -68,6 +68,9 @@ public:
 		return lastPrediction;
 	}
 
+	// Compute the rate of change of cost
+	// relative to the activation of the output layer
+
 	// Backwards propogation step
 	// Takes Matrix where each column is the expected output
 	// Of the ith node in the output layer
