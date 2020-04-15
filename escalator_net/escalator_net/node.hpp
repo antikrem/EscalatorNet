@@ -267,13 +267,13 @@ public:
 	/* sets dcda: rate of change of cost given this nodes activation
 	 * in the form of a column vector
 	 */
-	VMatrix<T> getdcda() const {
+	const VMatrix<T>& getdcda() const {
 		return dcda;
 	}
 
 	/* Gets dadz from last forward propogation
 	 */
-	VMatrix<T> getdadz() const {
+	const VMatrix<T>& getdadz() const {
 		return dadz;
 	}
 
