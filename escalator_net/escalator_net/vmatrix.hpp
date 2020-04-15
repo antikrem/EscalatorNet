@@ -368,6 +368,21 @@ public:
 		return c;
 	}
 
+	// Sums all values in a collumn and returns VMatrix with row length 1
+	VMatrix<T> sumRows() const {
+		VMatrix<T> c(1, columnLength, T(0));
+
+		for (uint j = 0; j < columnLength; j++) {
+			T v = T(0);
+			for (uint i = 0; i < rowLength; i++) {
+				v += get(i, j);
+			}
+			c.set(0, j, v);
+		}
+
+		return c;
+	}
+
 	// Returns element that has the maximum value
 	T max() const {
 		T uBound = data[0];

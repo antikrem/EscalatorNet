@@ -57,6 +57,64 @@ namespace tests {
 		std::cout << net.forwardPropogate(input) << std::endl;
 	}
 
+	/* implementation of an xor gate
+	 */
+	void fn_XORGate() {
+		// 14 sigmoid
+		Network<double> net(2, FunctionTypes::sigmoid, { 2, 1 }, 10.0);
+
+		VMatrix<double> input(
+			{
+				{0.0, 0.0},
+				{0.0, 1.0},
+				{1.0, 0.0},
+				{1.0, 1.0}
+			}
+		);
+
+		VMatrix<double> output(
+			{
+				{0.0},
+				{1.0},
+				{1.0},
+				{0.0}
+			}
+		);
+
+		net.optimiseNetwork(input, output, true);
+		std::cout << net << std::endl;
+		net.predict(input);
+	}
+
+	/* implementation of an xor gate
+	 */
+	void fn_NXORGate() {
+		// 14 sigmoid
+		Network<double> net(2, FunctionTypes::sigmoid, { 2, 1 }, 1.0);
+
+		VMatrix<double> input(
+			{
+				{0.0, 0.0},
+				{0.0, 1.0},
+				{1.0, 0.0},
+				{1.0, 1.0}
+			}
+		);
+
+		VMatrix<double> output(
+			{
+				{1.0},
+				{0.0},
+				{0.0},
+				{1.0}
+			}
+		);
+
+		net.optimiseNetwork(input, output, true);
+		std::cout << net << std::endl;
+		net.predict(input);
+	}
+
 	/* Runs all test
 	*/
 	void runFeedForwardTests() {
@@ -70,6 +128,14 @@ namespace tests {
 
 		std::cout << "Feed forward 3-5-3:" << std::endl;
 		fn_feedthrough353();
+		std::cout << std::endl;
+
+		std::cout << "XOR Gate:" << std::endl;
+		fn_XORGate();
+		std::cout << std::endl;
+
+		std::cout << "NXOR Gate:" << std::endl;
+		fn_NXORGate();
 		std::cout << std::endl;
 
 	}

@@ -22,7 +22,7 @@ private:
 	const T C_THRESH = T(0.01);
 
 	// Upperbound for total count
-	const uint ITER_MAX = 5000;
+	const uint ITER_MAX = 3000000;
 
 	// time taken
 	double executionTime = 0.0;
@@ -45,11 +45,11 @@ private:
 public:
 	// Generate network with given number of hidden layers
 	// All using same activation function
-	Network(uint inputWidth, FunctionTypes type, std::vector<uint> nodeCounts) {
+	Network(uint inputWidth, FunctionTypes type, std::vector<uint> nodeCounts, T leaningRate = T(1.0)) {
 		// Size of input for next layer
 		uint nextWidth = inputWidth;
 		for (auto i : nodeCounts) {
-			layers.push_back(Layer<T>(nextWidth, i, type));
+			layers.push_back(Layer<T>(nextWidth, i, type, leaningRate));
 			nextWidth = i;
 		}
 	}
@@ -80,8 +80,13 @@ public:
 	// And each column corresponds to a new input
 	void backwardPropogate(const VMatrix<T>& dCda) {
 
+		// Each layer is chained from the previous
+		// layers derivatives, This matrix keeps track of the chain
+		// Starts with single dCda
+		VMatrix<T> chained(dCda);
+
 		for (uint i = layers.size(); i--;) {
-			layers[i].propogateBackwards(dCda);
+			chained.assign(layers[i].propogateBackwards(chained));
 		}
 	}
 
@@ -111,8 +116,8 @@ public:
 			VMatrix<T> activations = forwardPropogate(input);
 			cost = computeCost(YObs);
 
-			if (print) {
-				std::cout << cost << std::endl;
+			if (print && !(count % 10000)) {
+				std::cout << "Cost: " << cost << " Left: " << ITER_MAX - count << std::endl;
 			}
 
 			// Compute dCda, where each row is for a new input

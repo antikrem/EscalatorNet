@@ -30,7 +30,7 @@ class Node {
 
 	/// Learning hyper parameters
 	// Learning rate 
-	const T L_RATE = T(0.25);
+	const T L_RATE;
 	// Cost optimisation threshold
 	const T C_THRESH = T(0.01);
 
@@ -86,8 +86,8 @@ class Node {
 public:
 	/* Takes FunctionTypes as parameter
 	 */
-	Node(typename FunctionTypes activationFunctionType, int inputSize)
-	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dInput(1, inputSize, T(0)) {
+	Node(typename FunctionTypes activationFunctionType, int inputSize, T leaningRate = T(1.0))
+	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dInput(1, inputSize, T(0)), L_RATE(leaningRate) {
 		this->activationFunctionType = activationFunctionType;
 		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
 		this->activationFunctionDerivative = Functions<T>::getFunctionDerivative(activationFunctionType);
@@ -195,8 +195,6 @@ public:
 		VMatrix<T> dzdIn = input;
 
 		return dCda.elementMultiply(dadz).elementMultiply(dzdIn);
-
-
 	}
 
 	/* Computes cost for multiple inputs
@@ -233,8 +231,10 @@ public:
 
 	/* Backwards propogation step, takes required prediction
 	 * And optimises weight and bias by a single step
+	 * Returns a column vector with the current depth 
+	 * takes in the current chain derivative
 	 */
-	void backwardsPropogation(const VMatrix<T>& dCda) {
+	VMatrix<T> backwardsPropogation(const VMatrix<T>& chain) {
 		// Compute gradients of cost for parameters for gradient descent
 		// Gradient will be averaged over each input set
 
@@ -242,15 +242,17 @@ public:
 		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
 
 		// Compute change in cost relative to bias and weight
-		dWeightV.assign(computeDCostDWeight(dCda, dadz));
-		dWeight = dWeightV.sumColumns() * T(1 / T(dCda.getColumnLength()));
+		dWeightV.assign(computeDCostDWeight(chain, dadz));
+		dWeight = dWeightV.sumColumns() * T(L_RATE / T(chain.getColumnLength()));
 
 		// Compute change in cost relative to bias and weight
-		dBiasV.assign(computeDCostDBias(dCda, dadz));
-		dBias = dBiasV.sum() * T(1 / T(dCda.getColumnLength()));
+		dBiasV.assign(computeDCostDBias(chain, dadz));
+		dBias = dBiasV.sum() * T(L_RATE / T(chain.getColumnLength()));
 
 		// Compute change in cost relative to input from previous level
-		dInput.assign(computeDCostDinput(dCda, dadz).sumColumns() * T(1 / T(dCda.getColumnLength())));
+		dInput.assign(computeDCostDinput(chain, dadz).sumRows());
+
+		return dInput;
 	}
 
 };
