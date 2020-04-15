@@ -18,7 +18,42 @@ private:
 	// Nodes within this layer
 	std::vector<Node<T>> nodes;
 
+	// Activation for this layer from last forward propogation
+	VMatrix<T> activation = VMatrix<T>(1, 1, T(0.0));
+
 public:
+	/* Computes dCda for this layer,
+	 * each row is the next input, each column, dcda for ith node
+	 * Takes:
+	 * reference to previous layer (L+1) for values
+	 */
+	void setdcda(const Layer<T>& layer) {
+		
+		// go through each node, and compute dcda
+		int i = -1;
+		for (auto& node : nodes) {
+			i++;
+			VMatrix<T> dcda(1, node.getActivation().getColumnLength(), T(0.0));
+		
+			for (auto& nextNode : layer.nodes) {
+				dcda = dcda + nextNode.getdcda().elementMultiply(nextNode.getdadz()) * nextNode.getWeight().getColumn(i).get(0, 0);
+			}
+
+			node.setdcda(dcda);
+		}
+	}
+
+	/* Sets dcda for the first layer
+	 * Takes as input, YObs, for this layer
+	 * sets dcda against 
+	 */
+	void setFirstdcda( const VMatrix<T> YObs) {
+		VMatrix<T> dcda = (activation - YObs) * T(2.0);
+		for (uint i = 0; i < nodes.size(); i++) {
+			nodes[i].setdcda(dcda.getColumn(i));
+		}
+	}
+
 	// Creates this layer for a fixed sized input
 	// with given count of of nodes and activation function
 	Layer(uint inputSize, uint nodeCount, FunctionTypes activationFunction, T learningRate = T(1.0))
@@ -44,29 +79,30 @@ public:
 			results.extend(node.forwardPropogation(input).qTranspose());
 		}
 
-		return results.transpose();
+		activation.assign(results.transpose());
+
+		return activation;
 	}
 
 	/* Applies backward propogation step
-	 * Takes array of expected output
-	 * Where each row is a new input
-	 * And each column is the expected output from the ith node in this layer
+	 * Takes dcda to current layer
+	 * where each row is a new input
+	 * and each column is the corresponding node's activation rate of change
 	 */
-	VMatrix<T> propogateBackwards(const VMatrix<T>& dCda) {
-		// Check there is a row for each 
-		//assert(nodes.size() == dCda.getRowLength());
+	void propogateBackwards() {
 
-		// Keep a matrix of results
-		// each VMatrx of results corresponds to
-		// the cost derivative for each input (column)
-		//
-		VMatrix<T> results(dCda.getColumnLength(), 0, T(0.0));
-
+		// Apply backprop to each node
+		// All parameters have already been set
 		for (uint i = 0; i < nodes.size(); i++) {
-			results.extend(nodes[i].backwardsPropogation(dCda.getColumn(i)).qTranspose());
+			nodes[i].backwardsPropogation();
 		}
 
-		return results.transpose();
+	}
+
+	// Returns activation from last forward pass
+	// For ith node in jth input
+	VMatrix<T> getActivation() {
+		return activation;
 	}
 };
 

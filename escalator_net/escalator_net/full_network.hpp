@@ -60,8 +60,8 @@ namespace tests {
 	/* implementation of an xor gate
 	 */
 	void fn_XORGate() {
-		// 14 sigmoid
-		Network<double> net(2, FunctionTypes::sigmoid, { 2, 1 }, 10.0);
+		// 14 sigmoid  
+		Network<double> net(2, FunctionTypes::sigmoid, { 2, 1 }, 1.0);
 
 		VMatrix<double> input(
 			{
@@ -90,7 +90,7 @@ namespace tests {
 	 */
 	void fn_NXORGate() {
 		// 14 sigmoid
-		Network<double> net(2, FunctionTypes::sigmoid, { 2, 1 }, 1.0);
+		Network<double> net(2, FunctionTypes::softplus, { 2, 1 }, 1.0);
 
 		VMatrix<double> input(
 			{

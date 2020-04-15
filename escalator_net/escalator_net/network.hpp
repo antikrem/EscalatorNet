@@ -78,15 +78,18 @@ public:
 	// Takes Matrix where each column is the expected output
 	// Of the ith node in the output layer
 	// And each column corresponds to a new input
-	void backwardPropogate(const VMatrix<T>& dCda) {
+	void backwardPropogate(const VMatrix<T>& YObs) {
 
-		// Each layer is chained from the previous
-		// layers derivatives, This matrix keeps track of the chain
-		// Starts with single dCda
-		VMatrix<T> chained(dCda);
-
+		// Iterate through backwards
 		for (uint i = layers.size(); i--;) {
-			chained.assign(layers[i].propogateBackwards(chained));
+			// compute dcda
+			if (i == layers.size() - 1) {
+				layers[i].setFirstdcda(YObs);
+			}
+			else {
+				layers[i].setdcda(layers[i + 1]);
+			}
+			layers[i].propogateBackwards();
 		}
 	}
 
@@ -120,11 +123,9 @@ public:
 				std::cout << "Cost: " << cost << " Left: " << ITER_MAX - count << std::endl;
 			}
 
-			// Compute dCda, where each row is for a new input
-			// and each column corresposnds to an activation
-			VMatrix<T> dCda = computeDCDa(activations, YObs);
+			// Apply an interation of backprop
+			backwardPropogate(YObs);
 
-			backwardPropogate(dCda);
 			count++;
 		}
 

@@ -58,6 +58,9 @@ class Node {
 
 	/// Backwards propogation step
 
+	// Change in each activation relative to linear combination
+	VMatrix<T> dadz = VMatrix<T>(1, 1);
+
 	// Change in cost relative to weight, for each input
 	VMatrix<T> dWeightV = VMatrix<T>(1, 1, T(0));
 
@@ -73,7 +76,7 @@ class Node {
 
 	// Change in cost relative to each component in input
 	// for each input
-	VMatrix<T> dInput;
+	VMatrix<T> dcda;
 
 	// Randomize weights
 	void randomiseWeights() {
@@ -87,7 +90,7 @@ public:
 	/* Takes FunctionTypes as parameter
 	 */
 	Node(typename FunctionTypes activationFunctionType, int inputSize, T leaningRate = T(1.0))
-	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dInput(1, inputSize, T(0)), L_RATE(leaningRate) {
+	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dcda(1, 1, T(0)), L_RATE(leaningRate) {
 		this->activationFunctionType = activationFunctionType;
 		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
 		this->activationFunctionDerivative = Functions<T>::getFunctionDerivative(activationFunctionType);
@@ -174,8 +177,7 @@ public:
 		return dadz.elementMultiply(dCda) * dzdb;
 	}
 
-	/* Computes cost derivative relative to in input of this bias (activation of last layer)
-	 * For current values of weight and bias
+	/* Computes cost derivative for this node, for each input
 	 */
 	VMatrix<T> computeDCostDinput(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
@@ -194,7 +196,7 @@ public:
 		// z relative to input
 		VMatrix<T> dzdIn = input;
 
-		return dCda.elementMultiply(dadz).elementMultiply(dzdIn);
+		return dCda.elementMultiply(dadz).elementMultiply(dzdIn).sumRows();
 	}
 
 	/* Computes cost for multiple inputs
@@ -224,37 +226,63 @@ public:
 		// Compute z of this node
 		z.assign(computeZ(input, weight, bias));
 
+		// compute shared sub-derivative dadz
+		dadz.assign(z.apply(activationFunctionDerivative));
+
+
 		// Compute activation of this node
 		a.assign(computeA(z));
 		return a;
 	}
 
+	/* Returns reference to activation
+	 */
+	const VMatrix<T>& getActivation() {
+		return a;
+	}
+
 	/* Backwards propogation step, takes required prediction
 	 * And optimises weight and bias by a single step
-	 * Returns a column vector with the current depth 
-	 * takes in the current chain derivative
 	 */
-	VMatrix<T> backwardsPropogation(const VMatrix<T>& chain) {
+	void backwardsPropogation() {
 		// Compute gradients of cost for parameters for gradient descent
 		// Gradient will be averaged over each input set
 
-		// compute shared sub-derivative dadz
-		VMatrix<T> dadz = z.apply(activationFunctionDerivative);
+		// Compute change in cost relative to bias and weight
+		dWeightV.assign(computeDCostDWeight(dcda, dadz));
+		dWeight = dWeightV.sumColumns() * T(L_RATE / T(dcda.getColumnLength()));
 
 		// Compute change in cost relative to bias and weight
-		dWeightV.assign(computeDCostDWeight(chain, dadz));
-		dWeight = dWeightV.sumColumns() * T(L_RATE / T(chain.getColumnLength()));
-
-		// Compute change in cost relative to bias and weight
-		dBiasV.assign(computeDCostDBias(chain, dadz));
-		dBias = dBiasV.sum() * T(L_RATE / T(chain.getColumnLength()));
-
-		// Compute change in cost relative to input from previous level
-		dInput.assign(computeDCostDinput(chain, dadz).sumRows());
-
-		return dInput;
+		dBiasV.assign(computeDCostDBias(dcda, dadz));
+		dBias = dBiasV.sum() * T(L_RATE / T(dcda.getColumnLength()));
 	}
 
+	/* sets dcda: rate of change of cost given this nodes activation
+	 * in the form of a column vector
+	 */
+	void setdcda(const VMatrix<T> dcda) {
+		this->dcda.assign(dcda);
+	}
+
+	/* sets dcda: rate of change of cost given this nodes activation
+	 * in the form of a column vector
+	 */
+	VMatrix<T> getdcda() const {
+		return dcda;
+	}
+
+	/* Gets dadz from last forward propogation
+	 */
+	VMatrix<T> getdadz() const {
+		return dadz;
+	}
+
+	/* Gets input, where each column is the for the kth prior node
+	 * and each row is a new input
+	 */
+	VMatrix<T> getWeight() const {
+		return weight.transpose();
+	}
 };
 
 template <typename T>
