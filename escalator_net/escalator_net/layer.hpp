@@ -36,7 +36,7 @@ public:
 			VMatrix<T> dcda(1, node.getActivation().getColumnLength(), T(0.0));
 		
 			for (auto& nextNode : layer.nodes) {
-				dcda = dcda + nextNode.getdcda().elementMultiply(nextNode.getdadz()) * nextNode.getWeight().getColumn(i).get(0, 0);
+				dcda = dcda + nextNode.getdcda().elementMultiply(nextNode.getdadz()) * nextNode.getWeight(i);
 			}
 
 			node.setdcda(dcda);
