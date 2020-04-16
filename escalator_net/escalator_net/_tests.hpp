@@ -25,6 +25,8 @@ namespace tests {
 		runShallowNodeTests();
 		declareTest("FULL_NETWORK");
 		runFullNetworkTests();
+		declareTest("ACTIVATION_FUNCTION_BENCHMARK");
+		runActivationFunctionBenchmark();
 
 	}
 }
