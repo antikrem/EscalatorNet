@@ -7,6 +7,7 @@
 #include "single_layer.hpp"
 #include "shallow_network.hpp"
 #include "full_network.hpp"
+#include "activation_function_benchmark.hpp"
 
 namespace tests {
 	/* Prints small message about which tests should be run
@@ -22,8 +23,9 @@ namespace tests {
 		runSingleLayerTests();
 		declareTest("SINGLE_LAYER_NETWORKS");
 		runShallowNodeTests();
-		declareTest("FEED_FORWARD");
-		runFeedForwardTests();
+		declareTest("FULL_NETWORK");
+		runFullNetworkTests();
+
 	}
 }
 

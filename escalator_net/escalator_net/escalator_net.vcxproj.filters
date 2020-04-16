@@ -83,5 +83,8 @@
     <ClInclude Include="stopwatch.hpp">
       <Filter>Header Files\helper</Filter>
     </ClInclude>
+    <ClInclude Include="activation_function_benchmark.hpp">
+      <Filter>Header Files\tests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
