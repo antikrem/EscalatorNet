@@ -143,7 +143,7 @@ public:
 		// dC/dw = dz/dw da/dz dC/da
 
 		// Matrices will need to be streched to acomodate each weight
-		VMatrix<T> stretcher = VMatrix(weight.getColumnLength(), 1, T(1.0f));
+		VMatrix<T> stretcher = VMatrix<T>(weight.getColumnLength(), 1, T(1.0f));
 
 		// Cost relative to this nodes activation
 		VMatrix<T> dCda = dCdaIN * stretcher;
