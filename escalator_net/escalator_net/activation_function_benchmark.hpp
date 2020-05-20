@@ -93,7 +93,7 @@ namespace tests {
 
 	/* implementation of an xor gate
 	 */
-	void afb_XORReLU() {
+	void afb_XORLeakyReLU() {
 		Network<double> net(2, FunctionTypes::ReLU, { 2, 1 }, 1.0);
 
 		VMatrix<double> input(
@@ -132,6 +132,10 @@ namespace tests {
 
 		std::cout << "XORReLU Gate:" << std::endl;
 		afb_XORReLU();
+		std::cout << std::endl;
+
+		std::cout << "XORLeakyReLU Gate:" << std::endl;
+		afb_XORLeakyReLU();
 		std::cout << std::endl;
 
 	}
