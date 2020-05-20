@@ -8,6 +8,7 @@
 #include "shallow_network.hpp"
 #include "full_network.hpp"
 #include "activation_function_benchmark.hpp"
+#include "line_trial.hpp"
 
 namespace tests {
 	/* Prints small message about which tests should be run
@@ -26,7 +27,9 @@ namespace tests {
 		declareTest("FULL_NETWORK");
 		runFullNetworkTests();
 		declareTest("ACTIVATION_FUNCTION_BENCHMARK");
-		runActivationFunctionBenchmark();
+	//	runActivationFunctionBenchmark();
+		declareTest("LINE_TRIAL");
+		runLineTrial();
 
 	}
 }
