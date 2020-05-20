@@ -158,7 +158,7 @@ public:
 	// Each sub vector is a row
 	// NO INPUT CHECKING ON VECTOR LENGTHS (TODO)
 	VMatrix(std::vector<std::vector<T>> input)
-		: rowLength(input[0].size()), columnLength(input.size()), length(rowLength * columnLength) {
+		: rowLength((uint)input[0].size()), columnLength((uint)input.size()), length(rowLength * columnLength) {
 
 		data = (T*)malloc(sizeof(T) * length);
 
@@ -390,7 +390,7 @@ public:
 	}
 
 	// Returns element that has the maximum value
-	T max() const {
+	T (max)() const {
 		T uBound = data[0];
 		for (uint i = 1; i < length; i++) {
 			uBound = data[i] > uBound ? data[i] : uBound;
@@ -399,7 +399,7 @@ public:
 	}
 
 	// Returns element that has the minimum value
-	T min() const {
+	T (min)() const {
 		T lBound = data[0];
 		for (uint i = 1; i < length; i++) {
 			lBound = data[i] < lBound ? data[i] : lBound;
@@ -410,7 +410,7 @@ public:
 	// Clamps all elements to given range
 	void clamp(T lower, T upper) {
 		for (uint i = 0; i < length; i++) {
-			data[i] = std::min(upper, std::max(lower, data[i]));
+			data[i] = (std::min)(upper, (std::max)(lower, data[i]));
 		}
 	}
 };

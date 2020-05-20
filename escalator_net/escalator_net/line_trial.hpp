@@ -31,7 +31,7 @@ struct LineTrialMaster {
 
 	VMatrix<double> getInput(uint inputWidth) {
 
-		VMatrix<double> input(inputWidth, list.size(), 0.0);
+		VMatrix<double> input(inputWidth, (uint)list.size(), 0.0);
 
 		for (uint j = 0; j < list.size(); j++) {
 			for (uint i = 0; i < inputWidth; i++) {
@@ -44,7 +44,7 @@ struct LineTrialMaster {
 
 	VMatrix<double> getOutput(uint outputWidth) {
 
-		VMatrix<double> output(outputWidth, list.size(), 0.0);
+		VMatrix<double> output(outputWidth, (uint)list.size(), 0.0);
 
 		for (uint j = 0; j < list.size(); j++) {
 			for (uint i = 0; i < outputWidth; i++) {

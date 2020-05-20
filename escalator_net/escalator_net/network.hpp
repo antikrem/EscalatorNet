@@ -81,7 +81,7 @@ public:
 	void backwardPropogate(const VMatrix<T>& YObs) {
 
 		// Iterate through backwards
-		for (uint i = layers.size(); i--;) {
+		for (uint i = (uint)layers.size(); i--;) {
 			// compute dcda
 			if (i == layers.size() - 1) {
 				layers[i].setFirstdcda(YObs);
