@@ -85,9 +85,6 @@ public:
 	}
 
 	/* Applies backward propogation step
-	 * Takes dcda to current layer
-	 * where each row is a new input
-	 * and each column is the corresponding node's activation rate of change
 	 */
 	void propogateBackwards() {
 
