@@ -63,6 +63,13 @@ public:
 		}
 	}
 
+	// Generate network with given number of all layers
+	// Using more default parameters
+	Network(std::vector<uint> nodeCounts)
+		: Network<T>(nodeCounts[0], FunctionTypes::sigmoid, std::vector<uint>(nodeCounts.begin() + 1, nodeCounts.end())) {
+
+	}
+
 	// Forward propogates through all layers
 	// Returns vector of predicted outputs from last iteration
 	VMatrix<T> forwardPropogate(const VMatrix<T>& input) {
