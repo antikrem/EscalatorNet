@@ -6,7 +6,7 @@
 
 #include "pylink_helper.h"
 
-const std::string E_NET_VERSION = "0.9";
+const std::string E_NET_VERSION = "1.0";
 
 #define E_NET_TYPE "EscalatorNetwork"
 
@@ -31,7 +31,7 @@ extern "C" {
 	}
 	
 	// Creates a network with 
-	static PyObject* Network_Create(PyObject* self, PyObject* o) {
+	static PyObject* Network_create(PyObject* self, PyObject* o) {
 		// Check length of object
 		int n = (int)PyList_Size(o);
 		if (n < 0) {
@@ -46,6 +46,20 @@ extern "C" {
 
 		//return PyCapsule_New(new Network<double>(nodeCount), E_NET_TYPE, NULL);
 		return PyCapsule_New(new Network<double>(nodeCount), E_NET_TYPE, NULL);
+	}
+
+	// Deletes a network
+	static PyObject* Network_delete(PyObject* self, PyObject* o) {
+		// Extract network
+		Network<double>* network = extractNetwork(o);
+		if (!network) {
+			return nullptr;
+		}
+
+		delete network;
+
+		Py_IncRef(Py_None);
+		return Py_None;
 	}
 
 	// Takes a PyCapsule and gets pointer
@@ -123,7 +137,8 @@ extern "C" {
 static PyMethodDef E_NET_ENGINE_METHODS[] = {
 	{ "version", (PyCFunction)getVersion, METH_NOARGS, nullptr },
 	{ "run_tests", (PyCFunction)runTests, METH_NOARGS, nullptr },
-	{ "Network_create", (PyCFunction)Network_Create, METH_O, nullptr },
+	{ "Network_create", (PyCFunction)Network_create, METH_O, nullptr },
+	{ "Network_delete", (PyCFunction)Network_delete, METH_O, nullptr },
 	{ "Network_get", (PyCFunction)Network_get, METH_O, nullptr },
 	{ "Network_addExample", (PyCFunction)Network_addExample, METH_VARARGS, nullptr },
 	{ "Network_train", (PyCFunction)Network_train, METH_O, nullptr },
