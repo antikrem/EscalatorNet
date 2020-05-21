@@ -1,5 +1,4 @@
 from distutils.core import setup, Extension, DEBUG
-#from Cython.Distutils import build_ext
 
 enet_module = Extension(
         'e_net_engine', 
@@ -15,6 +14,8 @@ setup(
         name = 'escalator_net', 
         version = '1.0',
         description = 'The Escalator Feedforward Multilayer Perceptron Project',
-        #cmdclass = {'build_ext': build_ext},
-        ext_modules = [enet_module, enet_wrap_module],
+        author = 'Chalinda Rodrigo',
+        author_email = 'chalindarodrigo@gmail.com',
+        url = r'https://github.com/antikrem/EscalatorNet',
+        ext_modules = [enet_module, enet_wrap_module]
     )
