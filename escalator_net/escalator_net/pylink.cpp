@@ -1,53 +1,40 @@
-#include <Windows.h>
-#include <cmath>
+#include <string>
+
 #include <Python.h>
 
-#include "_tests.hpp"
+#include "network.hpp"
 
-const double e = 2.7182818284590452353602874713527;
+#include "pylink_helper.h"
 
-double sinh_impl(double x) {
-	return (1 - pow(e, (-2 * x))) / (2 * pow(e, -x));
-}
+const std::string E_NET_VERSION = "0.9";
 
-double cosh_impl(double x) {
-	return (1 + pow(e, (-2 * x))) / (2 * pow(e, -x));
-}
+#define E_NET_TYPE "EscalatorNetwork"
 
-PyObject* tanh_impl(PyObject *, PyObject* o) {
-	double x = PyFloat_AsDouble(o);
-	double tanh_x = sinh_impl(x) / cosh_impl(x);
-	return PyFloat_FromDouble(tanh_x);
-}
 extern "C" {
-
-	// Runs all inbuilt tests
-	PyObject* run_tests(PyObject *, PyObject* o) {
-		rand_ex::reset();
-		tests::runAllTests();
-		return Py_BuildValue("");
+	// Returns string of version
+	static PyObject* getVersion(PyObject* self) {
+		return PY_STRING(E_NET_VERSION);
 	}
-
 }
 
 // Exported methods
-static PyMethodDef ESCALATOR_NET_METHODS[] = {
-	{ "run_tests", (PyCFunction)run_tests, METH_O, nullptr },
+static PyMethodDef E_NET_ENGINE_METHODS[] = {
+	{ "version", (PyCFunction)getVersion, METH_NOARGS, nullptr },
 	{ nullptr, nullptr, 0, nullptr }
 };
 
 
 // Exported Module
-static PyModuleDef ESCALATOR_NET_MODULE = {
+static PyModuleDef E_NET_ENGINE_MODULE = {
 	PyModuleDef_HEAD_INIT,
-	"escalator_net",
-	"Provides a feed forward multi-layer perceptron",
+	"e_net_engine",
+	"C Interface for Escalator Neural Network Engines",
 	0,
-	ESCALATOR_NET_METHODS   
+	E_NET_ENGINE_METHODS
 };
 
 
 // Initialiser
-PyMODINIT_FUNC PyInit_escalator_net() {
-	return PyModule_Create(&ESCALATOR_NET_MODULE);
+PyMODINIT_FUNC PyInit_e_net_engine() {
+	return PyModule_Create(&E_NET_ENGINE_MODULE);
 }

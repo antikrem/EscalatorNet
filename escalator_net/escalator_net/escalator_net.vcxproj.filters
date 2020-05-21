@@ -92,9 +92,15 @@
     <ClInclude Include="line_trial.hpp">
       <Filter>Header Files\tests</Filter>
     </ClInclude>
+    <ClInclude Include="pylink_helper.h">
+      <Filter>Header Files\pylink</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="setup.py">
+      <Filter>Header Files\pylink</Filter>
+    </None>
+    <None Include="network_wrap.py">
       <Filter>Header Files\pylink</Filter>
     </None>
   </ItemGroup>
