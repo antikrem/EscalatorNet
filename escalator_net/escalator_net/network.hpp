@@ -18,6 +18,15 @@ template <typename T> static std::ostream& operator<<(std::ostream& os, const Ne
 template <typename T>
 class Network {
 private:
+	// Set to true when an input comes in for an example
+	bool seeded = false;
+
+	// Internal Input
+	VMatrix<T> internalInput = VMatrix <T>(1, 1);
+
+	// Internal Output
+	VMatrix<T> internalOutput = VMatrix <T>(1, 1);
+
 	// Threshold for total network cost
 	const T C_THRESH = T(0.01);
 
@@ -104,27 +113,45 @@ public:
 					return pow(value, T(2));
 				}
 			).sum();
-	}	
+	}
 
-	// Optimises this network given input and observed
-	void optimiseNetwork(const VMatrix<T>& input, const VMatrix<T>& YObs, bool print = false) {
+	// Sets the training set, each row is a new example
+
+
+	// Adds an example
+	void addExample(const VMatrix<T>& input, const VMatrix<T>& output) {
+		// if not seeded, proceed to seed
+		if (!seeded) {
+			internalInput.assign(input);
+			internalOutput.assign(output);
+			seeded = true;
+		}
+		else {
+			internalInput.extend(input);
+			internalOutput.extend(output);
+		}
+	}
+
+	// Trains this network against internal input and output
+	void train(bool print = false) {
+
+		// Prepare updated variables
 		cost = T(C_THRESH + T(1));
-
 		count = 0;
 
 		stopwatch::tic();
 
 		while (cost > C_THRESH && count < ITER_MAX) {
 			// capture activation from forward propogation
-			VMatrix<T> activations = forwardPropogate(input);
-			cost = computeCost(YObs);
+			VMatrix<T> activations = forwardPropogate(internalInput);
+			cost = computeCost(internalOutput);
 
 			if (print && !(count % 10000)) {
 				std::cout << "Cost: " << cost << " Left: " << ITER_MAX - count << std::endl;
 			}
 
 			// Apply an interation of backprop
-			backwardPropogate(YObs);
+			backwardPropogate(internalOutput);
 
 			count++;
 		}

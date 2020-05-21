@@ -30,7 +30,9 @@ namespace tests {
 			}
 		);
 
-		net.optimiseNetwork(input, output);
+		net.addExample(input, output);
+		net.train();
+
 		std::cout << net << std::endl;
 		net.predict(input);
 	}
@@ -58,7 +60,9 @@ namespace tests {
 			}
 		);
 
-		net.optimiseNetwork(input, output);
+		net.addExample(input, output);
+		net.train();
+
 		std::cout << net << std::endl;
 		net.predict(input);
 	}
@@ -86,7 +90,9 @@ namespace tests {
 			}
 		);
 
-		net.optimiseNetwork(input, output);
+		net.addExample(input, output);
+		net.train();
+
 		std::cout << net << std::endl;
 		net.predict(input);
 	}
@@ -114,7 +120,9 @@ namespace tests {
 			}
 		);
 
-		net.optimiseNetwork(input, output);
+		net.addExample(input, output);
+		net.train();
+
 		std::cout << net << std::endl;
 		net.predict(input);
 	}

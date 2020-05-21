@@ -271,7 +271,8 @@ void lt_trial() {
 	VMatrix<double> input = master.getInput(16);
 	VMatrix<double> output = master.getOutput(2);
 
-	net.optimiseNetwork(input, output, true);
+	net.addExample(input, output);
+	net.train();
 
 	VMatrix<double> trial1(
 		{
