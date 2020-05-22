@@ -24,6 +24,24 @@ static Network<double>* extractNetwork(PyObject* item) {
 	}
 }
 
+// Converts a Pyobject list with row count into a Vmatrix
+static VMatrix<double> convertPyObToVMatrix(int height, PyObject* o) {
+	int width = ((int)PyList_Size(o)) / height;
+
+	VMatrix<double> mat(width, height, 0.0);
+	int count = -1;
+
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			count++;
+			PyObject* item = PyList_GetItem(o, i);
+			mat.set(i, j, PyFloat_AsDouble(item));
+		}
+	}
+
+	return mat;
+}
+
 extern "C" {
 	// Returns string of version
 	static PyObject* getVersion(PyObject* self) {
@@ -90,22 +108,8 @@ extern "C" {
 			return nullptr;
 		}
 
-		// Extract size of input
-		int inputLength = (int)PyList_Size(inputPy);
-		int outputLength = (int)PyList_Size(outputPy);
-		VMatrix<double> input = VMatrix<double>(inputLength, 1, 0.0);
-		VMatrix<double> output = VMatrix<double>(outputLength, 1, 0.0);
-
-		for (int i = 0; i < inputLength; i++) {
-			PyObject* item = PyList_GetItem(inputPy, i);
-			input.set(i, 0, PyFloat_AsDouble(item));
-		}
-
-		for (int i = 0; i < outputLength; i++) {
-			PyObject* item = PyList_GetItem(outputPy, i);
-			output.set(i, 0, PyFloat_AsDouble(item));
-		}
-
+		VMatrix<double> input = convertPyObToVMatrix(1, inputPy);
+		VMatrix<double> output = convertPyObToVMatrix(1, outputPy);
 		network->addExample(input, output);
 
 		return networkPy;
@@ -125,6 +129,11 @@ extern "C" {
 		std::cout << *network << std::endl;
 
 		return o;
+	}
+
+	static PyObject* Network_predict(PyObject* self) {
+		tests::runAllTests();
+		return PY_STRING(E_NET_VERSION);
 	}
 
 	static PyObject* runTests(PyObject* self) {
