@@ -28,7 +28,7 @@ class Network :
         '''
         Takes a single row of training data
         '''
-        Network_addExample(self._netPtr, input, output)
+        Network_addExample(self._netPtr, 1, input, output)
 
     def train(self) :
         '''

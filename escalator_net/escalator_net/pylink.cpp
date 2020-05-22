@@ -93,12 +93,15 @@ extern "C" {
 
 	// Takes a 2 rows, first is a list of input, second is a list of output
 	static PyObject* Network_addExample(PyObject* self, PyObject* args) {
+		// Number of rows
+		int numberOfRows;
+
 		// Input/output list as py objects
 		PyObject* networkPy;
 		PyObject* inputPy;
 		PyObject* outputPy;
 
-		if (!PyArg_ParseTuple(args, "OOO", &networkPy, &inputPy, &outputPy)) {
+		if (!PyArg_ParseTuple(args, "OiOO", &networkPy, &numberOfRows, &inputPy, &outputPy)) {
 			return nullptr;
 		}
 
@@ -108,8 +111,8 @@ extern "C" {
 			return nullptr;
 		}
 
-		VMatrix<double> input = convertPyObToVMatrix(1, inputPy);
-		VMatrix<double> output = convertPyObToVMatrix(1, outputPy);
+		VMatrix<double> input = convertPyObToVMatrix(numberOfRows, inputPy);
+		VMatrix<double> output = convertPyObToVMatrix(numberOfRows, outputPy);
 		network->addExample(input, output);
 
 		return networkPy;
