@@ -51,8 +51,8 @@ static PyObject* convertVMatrixToPyOb(const VMatrix<double>& mat) {
 
 	int count = -1; 
 
-	for (int j = 0; j < mat.getColumnLength(); j++) {
-		for (int i = 0; i < mat.getRowLength(); i++) {
+	for (uint j = 0; j < mat.getColumnLength(); j++) {
+		for (uint i = 0; i < mat.getRowLength(); i++) {
 			count++;
 			PyList_SetItem(
 					list, (Py_ssize_t)count, PyFloat_FromDouble(mat.get(i, j))
