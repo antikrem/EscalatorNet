@@ -31,15 +31,37 @@ static VMatrix<double> convertPyObToVMatrix(int height, PyObject* o) {
 	VMatrix<double> mat(width, height, 0.0);
 	int count = -1;
 
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
+	
+	for (int j = 0; j < height; j++) {
+		for (int i = 0; i < width; i++) {
 			count++;
-			PyObject* item = PyList_GetItem(o, i);
+			PyObject* item = PyList_GetItem(o, count);
 			mat.set(i, j, PyFloat_AsDouble(item));
 		}
 	}
 
 	return mat;
+}
+
+// Takes a VMatrix and creates a PyObject* 
+// Return is a tuple (rows, contents)
+// Where rows is a number or contents 
+static PyObject* convertVMatrixToPyOb(const VMatrix<double>& mat) {
+	PyObject* list = PyList_New(mat.getLength());
+
+	int count = -1; 
+
+	for (int j = 0; j < mat.getColumnLength(); j++) {
+		for (int i = 0; i < mat.getRowLength(); i++) {
+			count++;
+			PyList_SetItem(
+					list, (Py_ssize_t)count, PyFloat_FromDouble(mat.get(i, j))
+				);
+		}
+	}
+
+
+	return Py_BuildValue("(iO)", mat.getColumnLength(), list);
 }
 
 extern "C" {
@@ -92,7 +114,7 @@ extern "C" {
 	}
 
 	// Takes a 2 rows, first is a list of input, second is a list of output
-	static PyObject* Network_addExample(PyObject* self, PyObject* args) {
+	static PyObject* Network_addExamples(PyObject* self, PyObject* args) {
 		// Number of rows
 		int numberOfRows;
 
@@ -114,7 +136,7 @@ extern "C" {
 		VMatrix<double> input = convertPyObToVMatrix(numberOfRows, inputPy);
 		VMatrix<double> output = convertPyObToVMatrix(numberOfRows, outputPy);
 		network->addExample(input, output);
-
+		std::cout << input << std::endl;
 		return networkPy;
 	}
 
@@ -134,9 +156,28 @@ extern "C" {
 		return o;
 	}
 
-	static PyObject* Network_predict(PyObject* self) {
-		tests::runAllTests();
-		return PY_STRING(E_NET_VERSION);
+	// Takes an input and makes a prediction
+	static PyObject* Network_predict(PyObject* self, PyObject* args) {
+		// Number of rows
+		int numberOfRows;
+
+		// Input/output list as py objects
+		PyObject* networkPy;
+		PyObject* inputPy;
+
+		if (!PyArg_ParseTuple(args, "OiO", &networkPy, &numberOfRows, &inputPy)) {
+			return nullptr;
+		}
+
+		// Extract network
+		Network<double>* network = extractNetwork(networkPy);
+
+		// Extract input
+		VMatrix<double> input = convertPyObToVMatrix(numberOfRows, inputPy);
+
+		VMatrix<double> prediction = network->makePrediction(input);
+
+		return convertVMatrixToPyOb(prediction);
 	}
 
 	static PyObject* runTests(PyObject* self) {
@@ -152,8 +193,9 @@ static PyMethodDef E_NET_ENGINE_METHODS[] = {
 	{ "Network_create", (PyCFunction)Network_create, METH_O, nullptr },
 	{ "Network_delete", (PyCFunction)Network_delete, METH_O, nullptr },
 	{ "Network_get", (PyCFunction)Network_get, METH_O, nullptr },
-	{ "Network_addExample", (PyCFunction)Network_addExample, METH_VARARGS, nullptr },
+	{ "Network_addExamples", (PyCFunction)Network_addExamples, METH_VARARGS, nullptr },
 	{ "Network_train", (PyCFunction)Network_train, METH_O, nullptr },
+	{ "Network_predict", (PyCFunction)Network_predict, METH_VARARGS, nullptr },
 	{ nullptr, nullptr, 0, nullptr }
 };
 

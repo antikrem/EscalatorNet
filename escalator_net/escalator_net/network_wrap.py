@@ -1,6 +1,6 @@
 # Provdes interface for generating escalator networks
 
-from e_net_engine import Network_create, Network_delete, Network_get, Network_addExample, Network_train, version
+from e_net_engine import Network_create, Network_delete, Network_get, Network_addExamples, Network_train, Network_predict, version
 
 class Network :
     '''
@@ -28,16 +28,22 @@ class Network :
         '''
         Takes a single row of training data
         '''
-        Network_addExample(self._netPtr, 1, input, output)
+        Network_addExamples(self._netPtr, 1, input, output)
+
+    def add_examples(self, count, input, output) :
+        '''
+        Takes multiple examples for testing
+        '''
+        Network_addExamples(self._netPtr, count, input, output)
 
     def train(self) :
         '''
-        Takes a single row of training data
+        Trains the network with the internalally set trainging data
         '''
         Network_train(self._netPtr)
 
-    def predict(self) :
+    def predict(self, input) :
         '''
-        Takes a single row of input 
+        Make a prediction with given data
         '''
-        pass
+        return Network_predict(self._netPtr, 1, input)
