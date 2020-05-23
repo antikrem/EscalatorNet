@@ -110,8 +110,7 @@ extern "C" {
 
 		delete network;
 
-		Py_IncRef(Py_None);
-		return Py_None;
+		return PY_NONE;
 	}
 
 	// Takes a PyCapsule and gets pointer
