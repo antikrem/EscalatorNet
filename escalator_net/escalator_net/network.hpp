@@ -5,6 +5,7 @@
 
 #include "layer.hpp"
 #include "stopwatch.hpp"
+#include "hyper_parameters.h"
 
  // Forward declaraction of Node class for use by outstream operator declaraction
 template <typename T>
@@ -18,6 +19,9 @@ template <typename T> static std::ostream& operator<<(std::ostream& os, const Ne
 template <typename T>
 class Network {
 private:
+	// Set to true upon convergence
+	bool converged = false;
+
 	// Set to true when an input comes in for an example
 	bool seeded = false;
 
@@ -27,11 +31,8 @@ private:
 	// Internal Output
 	VMatrix<T> internalOutput = VMatrix <T>(1, 1);
 
-	// Threshold for total network cost
-	const T C_THRESH = T(0.01);
-
-	// Upperbound for total count
-	const uint ITER_MAX = 3000000;
+	// Hyper parameters for optimisation
+	HyperParameters hParams;
 
 	// time taken
 	double executionTime = 0.0;
@@ -67,6 +68,11 @@ public:
 	// Using more default parameters
 	Network(std::vector<uint> nodeCounts, std::string name)
 		: Network<T>(nodeCounts[0], Functions<T>::getFunctionFromName(name), std::vector<uint>(nodeCounts.begin() + 1, nodeCounts.end())) {
+	}
+
+	// Get a reference to internal hyper parameters
+	HyperParameters& getHParams() {
+		return hParams;
 	}
 
 	// Forward propogates through all layers
@@ -141,19 +147,23 @@ public:
 	// Trains this network against internal input and output
 	void train(bool print = false) {
 
+		// Cache some hyper parameters
+		const double CTHRESH = hParams.get(CONVERGENCE_THRESHOLD);
+		const uint ITERMAX = (uint)hParams.get(ITERATION_MAX);
+
 		// Prepare updated variables
-		cost = T(C_THRESH + T(1));
+		cost = T(CTHRESH + T(1));
 		count = 0;
 
 		stopwatch::tic();
 
-		while (cost > C_THRESH && count < ITER_MAX) {
+		while (cost > CTHRESH && count < ITERMAX) {
 			// capture activation from forward propogation
 			VMatrix<T> activations = forwardPropogate(internalInput);
 			cost = computeCost(internalOutput);
 
 			if (print && !(count % 10000)) {
-				std::cout << "Cost: " << cost << " Left: " << ITER_MAX - count << std::endl;
+				std::cout << "Cost: " << cost << " Left: " << ITERMAX - count << std::endl;
 			}
 
 			// Apply an interation of backprop
@@ -163,6 +173,9 @@ public:
 		}
 
 		executionTime = stopwatch::tocGet();
+
+		// Set convergence flag
+		converged = cost < CTHRESH;
 	}
 
 	// Makes prediction with given input
@@ -183,7 +196,7 @@ template <typename T>
 static std::ostream& operator<<(std::ostream& os, const Network<T>& n)
 {
 	std::cout << "NETWORK of " << n.layers.size() << " layers" << std::endl;
-	std::cout << "Converged: " << (n.cost < n.C_THRESH ? "TRUE" : "FALSE") 
+	std::cout << "Converged: " << (n.converged ? "TRUE" : "FALSE")
 		<< " IN " << n.executionTime << " seconds" << std::endl;
 	std::cout << "Iterations: " << n.count << std::endl;
 	std::cout << "Cost: " << n.cost;

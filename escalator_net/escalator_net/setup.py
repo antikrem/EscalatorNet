@@ -7,7 +7,7 @@ enet_module = Extension(
     )
 
 enet_function_types = Extension(
-        'function_types', ['function_types.py']
+        'enumerations', ['enumerations.py']
     )
 
 enet_wrap_module = Extension(

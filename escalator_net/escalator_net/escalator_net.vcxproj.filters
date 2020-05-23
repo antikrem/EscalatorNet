@@ -95,6 +95,9 @@
     <ClInclude Include="pylink_helper.h">
       <Filter>Header Files\pylink</Filter>
     </ClInclude>
+    <ClInclude Include="hyper_parameters.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="setup.py">
@@ -103,7 +106,7 @@
     <None Include="network_wrap.py">
       <Filter>Header Files\pylink</Filter>
     </None>
-    <None Include="function_types.py">
+    <None Include="enumerations.py">
       <Filter>Header Files\pylink</Filter>
     </None>
   </ItemGroup>

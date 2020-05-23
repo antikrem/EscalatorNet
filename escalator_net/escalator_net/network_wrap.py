@@ -1,7 +1,7 @@
 # Provdes interface for generating escalator networks
 
-from e_net_engine import Network_create, Network_delete, Network_get, Network_addExamples, Network_train, Network_predict, version
-from function_types import FunctionTypes
+from e_net_engine import Network_create, Network_delete, Network_setHyperParameter, Network_get, Network_addExamples, Network_train, Network_predict, version
+from enumerations import FunctionTypes, Parameters
 
 class Network :
     '''
@@ -25,6 +25,13 @@ class Network :
         Destroys underlying network
         '''
         Network_delete(self._netPtr)
+
+    def set_parameter(self, parameter, value) :
+        '''
+        Updates a hyper parameter in this model
+        Takes a Parameter as an argument
+        '''
+        Network_setHyperParameter(self._netPtr, parameter.value, value)
 
     def _validate(self) :
         print(Network_get(self._netPtr))

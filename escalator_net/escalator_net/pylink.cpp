@@ -113,6 +113,29 @@ extern "C" {
 		return PY_NONE;
 	}
 
+	// Updates network's parameter
+	static PyObject* Network_setHyperParameter(PyObject* self, PyObject* args) {
+		// Extract arguments
+		PyObject* networkPy;
+		char* name;
+		double value;
+
+		if (!PyArg_ParseTuple(args, "Osd", &networkPy, &name, &value)) {
+			return nullptr;
+		}
+
+		// Extract network
+		Network<double>* network = extractNetwork(networkPy);
+		if (!network) {
+			return nullptr;
+		}
+
+		// Update parameter
+		network->getHParams().set(name, value);
+
+		return PY_NONE;
+	}
+
 	// Takes a PyCapsule and gets pointer
 	static PyObject* Network_get(PyObject* self, PyObject* capsule) {
 		Network<double>* network;
@@ -203,6 +226,7 @@ static PyMethodDef E_NET_ENGINE_METHODS[] = {
 	{ "run_tests", (PyCFunction)runTests, METH_NOARGS, nullptr },
 	{ "Network_create", (PyCFunction)Network_create, METH_VARARGS, nullptr },
 	{ "Network_delete", (PyCFunction)Network_delete, METH_O, nullptr },
+	{ "Network_setHyperParameter", (PyCFunction)Network_setHyperParameter, METH_VARARGS, nullptr },
 	{ "Network_get", (PyCFunction)Network_get, METH_O, nullptr },
 	{ "Network_addExamples", (PyCFunction)Network_addExamples, METH_VARARGS, nullptr },
 	{ "Network_train", (PyCFunction)Network_train, METH_O, nullptr },
