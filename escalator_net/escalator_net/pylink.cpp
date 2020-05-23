@@ -71,21 +71,33 @@ extern "C" {
 	}
 	
 	// Creates a network with 
-	static PyObject* Network_create(PyObject* self, PyObject* o) {
+	static PyObject* Network_create(PyObject* self, PyObject* args) {
+
+		// Extract arguments
+		PyObject* nodesPy;
+		char* functionTypePtr;
+		
+		if (!PyArg_ParseTuple(args, "Os", &nodesPy, &functionTypePtr)) {
+			return nullptr;
+		}
+
 		// Check length of object
-		int n = (int)PyList_Size(o);
+		int n = (int)PyList_Size(nodesPy);
 		if (n < 0) {
 			return nullptr;
 		}
 
 		std::vector<uint> nodeCount;
 		for (int i = 0; i < n; i++) {
-			PyObject* item = PyList_GetItem(o, i);
+			PyObject* item = PyList_GetItem(nodesPy, i);
 			nodeCount.push_back((int)PyLong_AsSize_t(item));
 		}
 
+		// get function type
+		std::string functionName = std::string(functionTypePtr);
+
 		//return PyCapsule_New(new Network<double>(nodeCount), E_NET_TYPE, NULL);
-		return PyCapsule_New(new Network<double>(nodeCount), E_NET_TYPE, NULL);
+		return PyCapsule_New(new Network<double>(nodeCount, functionName), E_NET_TYPE, NULL);
 	}
 
 	// Deletes a network
@@ -190,7 +202,7 @@ extern "C" {
 static PyMethodDef E_NET_ENGINE_METHODS[] = {
 	{ "version", (PyCFunction)getVersion, METH_NOARGS, nullptr },
 	{ "run_tests", (PyCFunction)runTests, METH_NOARGS, nullptr },
-	{ "Network_create", (PyCFunction)Network_create, METH_O, nullptr },
+	{ "Network_create", (PyCFunction)Network_create, METH_VARARGS, nullptr },
 	{ "Network_delete", (PyCFunction)Network_delete, METH_O, nullptr },
 	{ "Network_get", (PyCFunction)Network_get, METH_O, nullptr },
 	{ "Network_addExamples", (PyCFunction)Network_addExamples, METH_VARARGS, nullptr },

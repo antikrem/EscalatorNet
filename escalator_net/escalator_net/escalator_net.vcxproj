@@ -199,6 +199,7 @@
     <ClInclude Include="_tests.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="function_types.py" />
     <None Include="network_wrap.py" />
     <None Include="setup.py" />
   </ItemGroup>

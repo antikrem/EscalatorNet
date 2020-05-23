@@ -103,5 +103,8 @@
     <None Include="network_wrap.py">
       <Filter>Header Files\pylink</Filter>
     </None>
+    <None Include="function_types.py">
+      <Filter>Header Files\pylink</Filter>
+    </None>
   </ItemGroup>
 </Project>

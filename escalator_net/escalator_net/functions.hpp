@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <string>
+#include <map>
 #include <math.h> 
 
 #include "types.hpp"
@@ -12,10 +13,19 @@
 
 // Different types of activation functions 
 enum FunctionTypes {
+	none,
 	sigmoid,
 	ReLU,
 	LeakyReLU,
 	softplus,
+};
+
+// Map of FunctionTypes to string name
+const std::map<FunctionTypes, std::string> FUNCTION_TYPES_TO_NAME = {
+	{sigmoid, "sigmoid"},
+	{ReLU, "ReLU"},
+	{LeakyReLU, "LeakyReLU"},
+	{softplus, "softplus"}
 };
 
 // List of templated functions for use
@@ -87,22 +97,22 @@ public:
 
 	// Returns a string name to a corresponding function type
 	static std::string getFunctionName(FunctionTypes type) {
-		switch (type) {
-		case FunctionTypes::sigmoid:
-			return "sigmoid";
-
-		case FunctionTypes::ReLU:
-			return "ReLU";
-
-		case FunctionTypes::LeakyReLU:
-			return "LeakyReLU";
-
-		case FunctionTypes::softplus:
-			return "softplus";
-
-		default:
+		if (FUNCTION_TYPES_TO_NAME.count(type)) {
+			return FUNCTION_TYPES_TO_NAME[type];
+		}
+		else {
 			return "None";
 		}
+	}
+
+	// Returns function type from a name
+	static FunctionTypes getFunctionFromName(std::string name) {
+		for (auto& i : FUNCTION_TYPES_TO_NAME) {
+			if (i.second == name) {
+				return i.first;
+			}
+		}
+		return FunctionTypes::none;
 	}
 
 	// Returns corresponding function derivative

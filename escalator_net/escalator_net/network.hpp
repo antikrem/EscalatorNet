@@ -65,9 +65,8 @@ public:
 
 	// Generate network with given number of all layers
 	// Using more default parameters
-	Network(std::vector<uint> nodeCounts)
-		: Network<T>(nodeCounts[0], FunctionTypes::sigmoid, std::vector<uint>(nodeCounts.begin() + 1, nodeCounts.end())) {
-
+	Network(std::vector<uint> nodeCounts, std::string name)
+		: Network<T>(nodeCounts[0], Functions<T>::getFunctionFromName(name), std::vector<uint>(nodeCounts.begin() + 1, nodeCounts.end())) {
 	}
 
 	// Forward propogates through all layers

@@ -6,6 +6,10 @@ enet_module = Extension(
         depends = ['network_wrap.py']
     )
 
+enet_function_types = Extension(
+        'function_types', ['function_types.py']
+    )
+
 enet_wrap_module = Extension(
         'escalator_net', ['network_wrap.py']
     )
@@ -17,5 +21,5 @@ setup(
         author = 'Chalinda Rodrigo',
         author_email = 'chalindarodrigo@gmail.com',
         url = r'https://github.com/antikrem/EscalatorNet',
-        ext_modules = [enet_module, enet_wrap_module]
+        ext_modules = [enet_module, enet_function_types, enet_wrap_module]
     )
