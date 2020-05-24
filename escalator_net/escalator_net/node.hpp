@@ -260,7 +260,7 @@ public:
 	/* sets dcda: rate of change of cost given this nodes activation
 	 * in the form of a column vector
 	 */
-	void setdcda(const VMatrix<T> dcda) {
+	void setdcda(const VMatrix<T>& dcda) {
 		this->dcda.assign(dcda);
 	}
 
