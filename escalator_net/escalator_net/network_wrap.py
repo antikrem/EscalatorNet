@@ -54,8 +54,21 @@ class Network :
         '''
         Network_train(self._netPtr)
 
-    def predict(self, input, count = 1) :
+    def predict(self, arg1, arg2 = None) :
         '''
         Make a prediction with given data
+        Has 2 overloads, whether it has 1 or multiple rows:
+
+        Input 1 (single row representing one input prediction):
+            arg1: Single row of data for prediction
+            arg2: Leave empty
+
+        Input 2 (single row representing multuple input prediction)
+            arg1: Number of inputs
+            arg2: Single row with every prediction concatenated
         '''
-        return Network_predict(self._netPtr, count, input)
+        if arg2 is None :
+            return Network_predict(self._netPtr, 1, arg1)
+        else :
+            return Network_predict(self._netPtr, arg1, arg2)
+        
