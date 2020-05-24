@@ -215,10 +215,10 @@ public:
 	 * Where each row is a vector of input
 	 * Returns activation of this node (1, j) where each row is activation for each input
 	 */
-	VMatrix<T> forwardPropogation(const VMatrix<T>& X) {
+	VMatrix<T> forwardPropogation(const VMatrix<T>& X, double LRATE) {
 		// Apply gradient descent from previous back propogation
-		weight = weight - dWeight.qTranspose();
-		bias = bias - dBias;
+		weight = weight - dWeight.qTranspose() * T(LRATE);
+		bias = bias - dBias * T(LRATE);
 
 		// Set input for backprop
 		input.assign(X);

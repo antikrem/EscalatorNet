@@ -70,13 +70,13 @@ public:
 	 * returns matrix where each row is an input
 	 * and each column is the return from i-th node
 	 */
-	VMatrix<T> propogateForward(const VMatrix<T>& input) {
+	VMatrix<T> propogateForward(const VMatrix<T>& input, double LRATE) {
 		assert(INPUTSIZE == input.getRowLength());
 		// Results matrix, will be extended transposed
 		VMatrix<T> results(input.getColumnLength(), 0, T(0.0));
 
 		for (Node<T>& node : nodes) {
-			results.extend(node.forwardPropogation(input).qTranspose());
+			results.extend(node.forwardPropogation(input, LRATE).qTranspose());
 		}
 
 		activation.assign(results.transpose());

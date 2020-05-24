@@ -11,7 +11,8 @@ class Network :
     def __init__(
                 self, 
                 nodeCount,
-                functiontype = FunctionTypes.sigmoid
+                functiontype = FunctionTypes.sigmoid,
+                learningrate = 1.0
             ) :
         '''
         Creates a Network with given node counts
@@ -19,6 +20,7 @@ class Network :
         '''
         self._netPtr = Network_create(nodeCount, functiontype.value)
         self.version = version()
+        self.set_parameter(Parameters.learning_rate, learningrate)
 
     def __del__(self):
         '''
@@ -65,7 +67,7 @@ class Network :
 
         Input 2 (single row representing multuple input prediction)
             arg1: Number of inputs
-            arg2: Single row with every prediction concatenated
+            arg2: Single row with every prediction input concatenated
         '''
         if arg2 is None :
             return Network_predict(self._netPtr, 1, arg1)

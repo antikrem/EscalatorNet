@@ -30,14 +30,7 @@ namespace tests {
 
 
 		Layer<double> a(2, 2, FunctionTypes::ReLU);
-		std::cout << a.propogateForward(input) << std::endl;
-
-		/*
-		Node<double> a(FunctionTypes::ReLU, 2);
-		Node<double> b(FunctionTypes::ReLU, 2);
-		std::cout << a.forwardPropogation(input) << std::endl;
-		std::cout << b.forwardPropogation(input) << std::endl;
-		*/
+		std::cout << a.propogateForward(input, 1.0) << std::endl;
 	}
 
 	/* Runs all test

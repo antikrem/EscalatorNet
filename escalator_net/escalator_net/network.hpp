@@ -77,13 +77,13 @@ public:
 
 	// Forward propogates through all layers
 	// Returns vector of predicted outputs from last iteration
-	VMatrix<T> forwardPropogate(const VMatrix<T>& input) {
+	VMatrix<T> forwardPropogate(const VMatrix<T>& input, float LRATE) {
 
 		// Input for next layer
 		lastPrediction.assign(input);
 
 		for (auto& i : layers) {
-			lastPrediction.assign(i.propogateForward(lastPrediction));
+			lastPrediction.assign(i.propogateForward(lastPrediction, LRATE));
 		}
 
 		return lastPrediction;
@@ -150,6 +150,7 @@ public:
 		// Cache some hyper parameters
 		const double CTHRESH = hParams.get(CONVERGENCE_THRESHOLD);
 		const uint ITERMAX = (uint)hParams.get(ITERATION_MAX);
+		const double LRATE = hParams.get(LEARNING_RATE);
 
 		// Prepare updated variables
 		cost = T(CTHRESH + T(1));
@@ -159,7 +160,7 @@ public:
 
 		while (cost > CTHRESH && count < ITERMAX) {
 			// capture activation from forward propogation
-			VMatrix<T> activations = forwardPropogate(internalInput);
+			VMatrix<T> activations = forwardPropogate(internalInput, LRATE);
 			cost = computeCost(internalOutput);
 
 			if (print && !(count % 10000)) {
@@ -180,7 +181,7 @@ public:
 
 	// Makes prediction with given input
 	VMatrix<T> makePrediction(const VMatrix<T>& input) {
-		return forwardPropogate(input);
+		return forwardPropogate(input, T(0.0));
 	}
 
 	// Makes prediction with nice output
