@@ -137,7 +137,7 @@ public:
 
 	/* Computes rate of change for each weight
 	 */
-	VMatrix<T> computeDCostDWeight(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
+	void computeDCostDWeight(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/dw = dz/dw da/dz dC/da
@@ -154,13 +154,13 @@ public:
 		// z relative to bias
 		VMatrix<T> dzdw = input;
 
-		return dCda.elementMultiply(dadz).elementMultiply(dzdw);
+		dWeightV.assign(dCda.elementMultiply(dadz).elementMultiply(dzdw));
 	}
 
 	/* Computes cost derivative relative to bias analytically
 	 * For current values of z and a
 	 */
-	VMatrix<T> computeDCostDBias(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
+	void computeDCostDBias(const VMatrix<T>& dCdaIN, const VMatrix<T>& dadzIN) {
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/db = dz/db da/dz dC/da
@@ -174,7 +174,7 @@ public:
 		// z relative to bias
 		T dzdb = T(1.0);
 
-		return dadz.elementMultiply(dCda) * dzdb;
+		dBiasV.assign(dadz.elementMultiply(dCda) * dzdb);
 	}
 
 	/* Computes cost derivative for this node, for each input
@@ -249,12 +249,12 @@ public:
 		// Gradient will be averaged over each input set
 
 		// Compute change in cost relative to bias and weight
-		dWeightV.assign(computeDCostDWeight(dcda, dadz));
-		dWeight = dWeightV.sumColumns() * T(L_RATE / T(dcda.getColumnLength()));
+		computeDCostDWeight(dcda, dadz);
+		dWeight = dWeightV.sumColumns() * T(1 / T(dcda.getColumnLength()));
 
 		// Compute change in cost relative to bias and weight
-		dBiasV.assign(computeDCostDBias(dcda, dadz));
-		dBias = dBiasV.sum() * T(L_RATE / T(dcda.getColumnLength()));
+		computeDCostDBias(dcda, dadz);
+		dBias = dBiasV.sum() * T(1 / T(dcda.getColumnLength()));
 	}
 
 	/* sets dcda: rate of change of cost given this nodes activation
