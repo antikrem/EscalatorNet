@@ -90,6 +90,17 @@ public:
 		alg::copy(data, this->data, length);
 	}
 
+	// Fill matrix with a single value
+	void fill(T value) {
+		alg::fill(this->data, this->length, value);
+	}
+
+	// Fill and resize
+	void qFill(uint rowLength, uint columnLength, T value) {
+		this->resize(rowLength, columnLength);
+		alg::fill(this->data, this->length, value);
+	}
+
 	// get value by (x,y) coord
 	// Throws assertion error on invalid x,y in debug
 	T get(uint x, uint y) const {
