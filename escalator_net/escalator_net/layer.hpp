@@ -56,10 +56,10 @@ public:
 
 	// Creates this layer for a fixed sized input
 	// with given count of of nodes and activation function
-	Layer(uint inputSize, uint nodeCount, FunctionTypes activationFunction, T learningRate = T(1.0))
+	Layer(uint inputSize, uint nodeCount, FunctionTypes activationFunction)
 	: INPUTSIZE(inputSize) {
 		for (uint i = 0; i < nodeCount; i++) {
-			nodes.push_back(Node<T>(activationFunction, inputSize, learningRate));
+			nodes.push_back(Node<T>(activationFunction, inputSize));
 		}
 	}
 	

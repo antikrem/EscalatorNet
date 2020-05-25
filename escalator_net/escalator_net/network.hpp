@@ -55,11 +55,11 @@ private:
 public:
 	// Generate network with given number of hidden layers
 	// All using same activation function
-	Network(uint inputWidth, FunctionTypes type, std::vector<uint> nodeCounts, T leaningRate = T(1.0)) {
+	Network(uint inputWidth, FunctionTypes type, std::vector<uint> nodeCounts) {
 		// Size of input for next layer
 		uint nextWidth = inputWidth;
 		for (auto i : nodeCounts) {
-			layers.push_back(Layer<T>(nextWidth, i, type, leaningRate));
+			layers.push_back(Layer<T>(nextWidth, i, type));
 			nextWidth = i;
 		}
 	}

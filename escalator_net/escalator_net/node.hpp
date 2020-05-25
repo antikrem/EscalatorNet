@@ -25,7 +25,7 @@ class Node {
 	typename Functions<T>::function_ptr activationFunction = nullptr;
 	typename Functions<T>::function_ptr activationFunctionDerivative = nullptr;
 
-	// size of input (nodes coming in)
+	// size of input
 	uint inputSize;
 
 	/// Node parameters
@@ -80,8 +80,8 @@ class Node {
 public:
 	/* Takes FunctionTypes as parameter
 	 */
-	Node(typename FunctionTypes activationFunctionType, int inputSize, T leaningRate = T(1.0))
-		: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dcda(1, 1, T(0)), L_RATE(leaningRate) {
+	Node(typename FunctionTypes activationFunctionType, int inputSize)
+		: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dcda(1, 1, T(0)) {
 		this->activationFunctionType = activationFunctionType;
 		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
 		this->activationFunctionDerivative = Functions<T>::getFunctionDerivative(activationFunctionType);
