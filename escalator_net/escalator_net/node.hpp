@@ -36,7 +36,7 @@ class Node {
 
 	// size of input
 	uint inputSize;
-	
+
 	/// Node parameters
 	// Associated weights
 	// Presented as a vertical vector
@@ -90,7 +90,7 @@ public:
 	/* Takes FunctionTypes as parameter
 	 */
 	Node(typename FunctionTypes activationFunctionType, int inputSize, T leaningRate = T(1.0))
-	: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dcda(1, 1, T(0)), L_RATE(leaningRate) {
+		: inputSize(inputSize), weight(1, inputSize, T(0)), dWeight(inputSize, 1, T(0)), dcda(1, 1, T(0)), L_RATE(leaningRate) {
 		this->activationFunctionType = activationFunctionType;
 		this->activationFunction = Functions<T>::getFunction(activationFunctionType);
 		this->activationFunctionDerivative = Functions<T>::getFunctionDerivative(activationFunctionType);
@@ -102,7 +102,7 @@ public:
 	 */
 	T predict(const VMatrix<T>& input) {
 		assert(input.getRowLength() == inputSize && input.getColumnLength() == 1 && "Input must be accepted size of (inputSize, 1)");
-		T z = (input * weight).get(0,0) + bias;
+		T z = (input * weight).get(0, 0) + bias;
 		T k = activationFunction(z);
 		return activationFunction(z);
 	}
@@ -111,7 +111,7 @@ public:
 	 * input is in the for of a reference to a VMatrix of size (inputSize, j)
 	 * Weight is a matrix where each column is a set of weights, and there are k columns
 	 * Will return a matrix of size (k, j), where each row is a prediction for the ith input
-	 * and each collumn is a different 
+	 * and each collumn is a different
 	 */
 	VMatrix<T> vPredict(const VMatrix<T>& input, const VMatrix<T>& weight, const T& bias) {
 		assert(input.getRowLength() == inputSize && "Input must be accepted size of (inputSize, j)");
@@ -152,9 +152,11 @@ public:
 		VMatrix<T> dadz = dadzIN * stretcher;
 
 		// z relative to bias
-		VMatrix<T> dzdw = input;
+		VMatrix<T>& dzdw = input;
 
-		dWeightV.assign(dCda.elementMultiply(dadz).elementMultiply(dzdw));
+		dWeightV.assign(dzdw);
+		dWeightV.qElementMultiply(dadz);
+		dWeightV.qElementMultiply(dCda);
 	}
 
 	/* Computes cost derivative relative to bias analytically
@@ -164,7 +166,7 @@ public:
 		// Compute each sub derivative in chain rule
 		// Recall:
 		// dC/db = dz/db da/dz dC/da
-		
+
 		// Cost relative to this nodes activation
 		const VMatrix<T>& dCda = dCdaIN;
 
@@ -174,7 +176,9 @@ public:
 		// z relative to bias
 		T dzdb = T(1.0);
 
-		dBiasV.assign(dadz.elementMultiply(dCda) * dzdb);
+		dBiasV.assign(dadz /* * dzdb*/);
+		dBiasV.qElementMultiply(dCda);
+
 	}
 
 	/* Computes cost derivative for this node, for each input
@@ -206,8 +210,8 @@ public:
 		// TODO: use cross-entropy cost
 		return (YPred - YObs).apply(
 			[](T value) {
-				return pow(value, T(2));
-			}
+			return pow(value, T(2));
+		}
 		).sum();
 	}
 
