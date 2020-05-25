@@ -53,6 +53,19 @@ private:
 	 */
 	T* data = nullptr;
 
+	// Resizes this matrix to be given size
+	// Has no impact if rowLength/columnLength is the same
+	void resize(uint rowLength, uint columnLength) {
+		if (rowLength != this->rowLength || columnLength != this->columnLength) {
+			this->rowLength = rowLength;
+			this->columnLength = columnLength;
+			this->length = rowLength * columnLength;
+
+			free(data);
+			data = (T*)malloc(sizeof(T) * length);
+		}
+	}
+
 	// Constructor for matrix via identity
 	// Only works for square matrix
 public:
@@ -211,13 +224,7 @@ public:
 	// No restriction on size of matrix
 	// This matrix will change size to acommodate
 	void assign(const VMatrix& b) {
-		this->rowLength = b.rowLength;
-		this->columnLength = b.columnLength;
-		this->length = b.length;
-
-		free(data);
-		data = (T*)malloc(sizeof(T) * length);
-
+		this->resize(b.rowLength, b.columnLength);
 		alg::copy(b.data, this->data, length);
 
 	}
