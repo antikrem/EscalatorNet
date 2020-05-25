@@ -25,16 +25,7 @@ class Node {
 	typename Functions<T>::function_ptr activationFunction = nullptr;
 	typename Functions<T>::function_ptr activationFunctionDerivative = nullptr;
 
-	// Finite step difference constant
-	const T H = T(0.001);
-
-	/// Learning hyper parameters
-	// Learning rate 
-	const T L_RATE;
-	// Cost optimisation threshold
-	const T C_THRESH = T(0.01);
-
-	// size of input
+	// size of input (nodes coming in)
 	uint inputSize;
 
 	/// Node parameters
