@@ -10,8 +10,6 @@ const std::string E_NET_VERSION = "1.0";
 
 #define E_NET_TYPE "EscalatorNetwork"
 
-#include "_tests.hpp"
-
 // Unpacks a PyObject with an underlying PyCapsule to a Network*
 // Returns nullptr on failure
 static Network<double>* extractNetwork(PyObject* item) {
@@ -169,8 +167,9 @@ extern "C" {
 
 		VMatrix<double> input = convertPyObToVMatrix(numberOfRows, inputPy);
 		VMatrix<double> output = convertPyObToVMatrix(numberOfRows, outputPy);
+
 		network->addExample(input, output);
-		std::cout << input << std::endl;
+		
 		return networkPy;
 	}
 
@@ -214,16 +213,11 @@ extern "C" {
 		return convertVMatrixToPyOb(prediction);
 	}
 
-	static PyObject* runTests(PyObject* self) {
-		tests::runAllTests();
-		return PY_STRING(E_NET_VERSION);
-	}
 }
 
 // Exported methods
 static PyMethodDef E_NET_ENGINE_METHODS[] = {
 	{ "version", (PyCFunction)getVersion, METH_NOARGS, nullptr },
-	{ "run_tests", (PyCFunction)runTests, METH_NOARGS, nullptr },
 	{ "Network_create", (PyCFunction)Network_create, METH_VARARGS, nullptr },
 	{ "Network_delete", (PyCFunction)Network_delete, METH_O, nullptr },
 	{ "Network_setHyperParameter", (PyCFunction)Network_setHyperParameter, METH_VARARGS, nullptr },
