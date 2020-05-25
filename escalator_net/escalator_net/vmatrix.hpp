@@ -314,6 +314,16 @@ public:
 		return c;
 	}
 
+	// Conduct VMatrix element wise multiplication with no copy
+	void qElementMultiply(const VMatrix& b) const {
+		// Assert matrix dimensions for multiplication 
+		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength
+			&& "Matrix elementwise multiplication requries same size matrices");
+
+		for (uint i = 0; i < c.length; i++) {
+			this->data[i] = this->data[i] * b.data[i];
+		}
+	}
 
 	// Aplies a lambda F to each element in the function
 	// F : T -> T for each cell in matrix
