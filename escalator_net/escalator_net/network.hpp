@@ -200,6 +200,7 @@ static std::ostream& operator<<(std::ostream& os, const Network<T>& n)
 	std::cout << "Converged: " << (n.converged ? "TRUE" : "FALSE")
 		<< " IN " << n.executionTime << " seconds" << std::endl;
 	std::cout << "Iterations: " << n.count << std::endl;
+	std::cout << "Perf: Its/second " << n.count / n.executionTime << std::endl;
 	std::cout << "Cost: " << n.cost;
 	return os;
 }
