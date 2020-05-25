@@ -338,7 +338,7 @@ public:
 		assert(this->rowLength == b.rowLength && this->columnLength == b.columnLength
 			&& "Matrix elementwise multiplication requries same size matrices");
 
-		for (uint i = 0; i < c.length; i++) {
+		for (uint i = 0; i < this->length; i++) {
 			this->data[i] = this->data[i] * b.data[i];
 		}
 	}
