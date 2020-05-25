@@ -307,14 +307,13 @@ public:
 		// Create VMatrix to use as return
 		VMatrix c(this->rowLength, this->columnLength, T(0));
 
-		for (uint i = 0; i < c.rowLength; i++) {
-			for (uint j = 0; j < c.columnLength; j++) {
-				c.set(i, j, this->get(i, j) * b.get(i, j));
-			}
+		for (uint i = 0; i < c.length; i++) {
+			c.data[i] = this->data[i] * b.data[i];
 		}
 
 		return c;
 	}
+
 
 	// Aplies a lambda F to each element in the function
 	// F : T -> T for each cell in matrix
