@@ -77,7 +77,7 @@ public:
 
 	// Forward propogates through all layers
 	// Returns vector of predicted outputs from last iteration
-	VMatrix<T> forwardPropogate(const VMatrix<T>& input, float LRATE) {
+	VMatrix<T> forwardPropogate(const VMatrix<T>& input, double LRATE) {
 
 		// Input for next layer
 		lastPrediction.assign(input);
